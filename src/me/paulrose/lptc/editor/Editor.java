@@ -1,13 +1,17 @@
 package me.paulrose.lptc.editor;
 
-import javax.swing.JPanel;
+import java.awt.Dimension;
 
-public class Editor extends JPanel{
+import javax.swing.JEditorPane;
+import javax.swing.border.EmptyBorder;
+
+public class Editor extends JEditorPane {
+
 	
-	
-	
-	public Editor(){
+	public Editor(int width, int height){
+		
+		setPreferredSize(new Dimension(width, height));
 		
 	}
-
+	
 }
