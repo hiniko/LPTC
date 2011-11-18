@@ -28,18 +28,20 @@ public class Window extends JFrame {
 		// Create and instance of the simulator
 		simulator = new Simulator();
 		
-		// Add the editor to this window
-		add(editor, BorderLayout.WEST);
-		
 		// Create Menubar
 		createMenuBar();
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
-		// Set up all window elements, Show time
-		add(menuBar, BorderLayout.NORTH);
-		add(editor, BorderLayout.WEST);
-		add(simulator, BorderLayout.EAST);
+		// Change default gaps
 		
+		
+		// Set up all window elements, Show time
+		//add(menuBar, BorderLayout.NORTH);
+		add(editor, BorderLayout.WEST);
+		//add(simulator, BorderLayout.CENTER);
+		
+		
+			
 		setVisible(true);
 		
 	}
