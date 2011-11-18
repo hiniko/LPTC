@@ -18,9 +18,11 @@ public class Window extends JFrame {
 
 	public Window(){
 		
-		// Set window properties1	
+		// Set window properties
 		setSize(1080, 720);
 		setTitle("Learning Through Programming");
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		
 		// Create an instance of the editor
 		editor = new EditorPanel();
@@ -28,21 +30,20 @@ public class Window extends JFrame {
 		// Create and instance of the simulator
 		simulator = new Simulator();
 		
+		
+		
+		
 		// Create Menubar
 		createMenuBar();
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		
-		// Change default gaps
-		
 		
 		// Set up all window elements, Show time
-		//add(menuBar, BorderLayout.NORTH);
+		add(menuBar, BorderLayout.NORTH);
 		add(editor, BorderLayout.WEST);
-		//add(simulator, BorderLayout.CENTER);
+		add(simulator, BorderLayout.CENTER);
 		
 		
 			
-		setVisible(true);
+		setVisible(true); 
 		
 	}
 	

@@ -11,8 +11,8 @@ public class Editor extends JEditorPane {
 	
 	public Editor(int width, int height){
 		
-		//setPreferredSize(new Dimension(width, height));
-		//setMargin(new Insets(0, 0, 0, 0));
+		
+		setPreferredSize(new Dimension(width, height));
 	}
 	
 }
