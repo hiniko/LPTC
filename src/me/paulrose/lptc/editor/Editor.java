@@ -9,10 +9,8 @@ import javax.swing.border.EmptyBorder;
 public class Editor extends JEditorPane {
 
 	
-	public Editor(int width, int height){
-		
-		
-		setPreferredSize(new Dimension(width, height));
+	public Editor(int instance){
+		setAutoscrolls(true);
 	}
 	
 }
