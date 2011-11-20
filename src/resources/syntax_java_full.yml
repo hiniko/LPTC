@@ -4,13 +4,13 @@ keywords:
   - else
   - do
   - while
-  - for
+  - for,
   - switch
   - case
   - break
   - continue
-  - "true"
-  - "false"
+  - true
+  - false
   - this
   - boolean
   - byte

@@ -12,7 +12,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JToolBar;
 
-import org.fife.ui.rsyntaxtextarea.*;
 
 public class EditorPanel extends JPanel{
 	

@@ -20,7 +20,7 @@ public class Window extends JFrame {
 		
 		// Set window properties
 		setSize(1080, 720);
-		setTitle("Learning Through Programming");
+		setTitle("Learning Programming Through Competition");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		
