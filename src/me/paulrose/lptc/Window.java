@@ -30,9 +30,6 @@ public class Window extends JFrame {
 		// Create and instance of the simulator
 		simulator = new Simulator();
 		
-		
-		
-		
 		// Create Menubar
 		createMenuBar();
 		
@@ -40,9 +37,7 @@ public class Window extends JFrame {
 		add(menuBar, BorderLayout.NORTH);
 		add(editor, BorderLayout.WEST);
 		add(simulator, BorderLayout.CENTER);
-		
-		
-			
+					
 		setVisible(true); 
 		
 	}

@@ -1,27 +1,28 @@
 package me.paulrose.lptc.editor;
 
-import java.awt.Dimension;
+
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
 
-import javax.swing.JEditorPane;
 import javax.swing.JTextPane;
-import javax.swing.border.EmptyBorder;
+
 
 public class Editor extends JTextPane {
 
-	private HighlightedDocument document = new HighlightedDocument();
+	private HighlightedDocument document = new HighlightedDocument(this);
 	
-	public Editor(int instance){
-		
+	public Editor(int instance)
+	{
 		setDocument(document);
 		setAutoscrolls(true);
-		
+		setMargin(new Insets(10, 10, 10, 10));
 	}
 	
-	
+
+
 	// Override to turn on Antialiased text
 	public void paintComponent( Graphics g )
 	{
@@ -31,4 +32,5 @@ public class Editor extends JTextPane {
 		super.paintComponent( g );
 	}
 	
+
 }

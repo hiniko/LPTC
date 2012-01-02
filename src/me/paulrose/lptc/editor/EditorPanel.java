@@ -46,7 +46,7 @@ public class EditorPanel extends JPanel{
 		add(toolbar, BorderLayout.NORTH);
 		add(tabs, BorderLayout.CENTER);
 		add(helpbox, BorderLayout.SOUTH);
-		
+				
 	}
 	
 	public void newDocument(){

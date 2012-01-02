@@ -1,66 +1,80 @@
 package me.paulrose.lptc.editor;
 
+import java.awt.Color;
+import java.util.LinkedList;
+
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.Element;
+
 import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+
 
 public class HighlightedDocument extends DefaultStyledDocument
 {
-	private int lastSpaceIndex = 0;
-	private HighlightedColours hc = new HighlightedColours();
+	private TextHighlighter colourer;
+	private SimpleAttributeSet defaultStyle;
+	private Editor editor;
+	private int indentLevel;
 	
-	public HighlightedDocument()
+	public HighlightedDocument(final Editor e)
 	{
+		// init class variables
+		defaultStyle = new SimpleAttributeSet();	
+		// Define the default style
+		StyleConstants.setFontSize(defaultStyle, 14);
+		StyleConstants.setFontFamily(defaultStyle, "Monospaced");
+		StyleConstants.setForeground(defaultStyle, Color.BLACK);
+		StyleConstants.setBold(defaultStyle, false);
+		StyleConstants.setItalic(defaultStyle, false);
 		
+		colourer = new TextHighlighter(defaultStyle);
+		
+		editor = e;	
+		
+		indentLevel = 0;
+		
+		//addDocumentListener(new HighlightedDcoumentListener());
 	}
 	
 	public void insertString(int offs, String str, AttributeSet a)
-		throws BadLocationException
-	{
-		if( str.compareToIgnoreCase(" ") == 0 || str.compareToIgnoreCase("\n") == 0)
-		{
-			System.out.println("Space has been pressed!");
-			super.insertString(offs, str, a);
-			
-			runColourer(lastSpaceIndex, offs);
-			lastSpaceIndex = offs+1;
-			
+	throws BadLocationException
+	{	
+		// Text Transformations take place here
+		// TODO optional auto completes
+		// Replace Tabs with 4 spaces
+		if( str.contains("\t") )
+			str = str.replaceAll("\t", "    ");
 		
-		}else{
-			// Render string as normal
-			super.insertString(offs, str, a);
+		StringBuilder input  = new StringBuilder(str);
+		
+		for(int i=0; i<indentLevel; i++)
+		{
+			input.append("    ");
 		}
 		
+		super.insertString(offs, input.toString(), defaultStyle);
+		
+		// Get the current sentance and send to the colourer
+		Element e = getParagraphElement(editor.getCaretPosition());
+		colourer.style(e.getStartOffset(), e.getEndOffset(), this);
+		
 	}
-	
-	public void runColourer(int start, int end)
+                    
+	public void remove(int offs, int len)
+	throws BadLocationException
 	{
-		// Get the word at the offset
-		try 
-		{
-			// Calculate the length of the word
-			int length = end - start;
-			
-			// Length has to be greater then 0
-			if(length > 0){
-				String text = getText(start, (end - start));
-				
-				// Run the text though matching and return the styles
-				SimpleAttributeSet style =  hc.getStyle(text);
-				// If there was a successful match...
-				if (style != null){
-					System.out.println("Changing styles of :: " + text);
-					setCharacterAttributes(start, length, style, false );
-					
-				}
-			}
-			
-		} catch (BadLocationException e) 
-		{
-			e.printStackTrace();
-		}
-			
+		super.remove(offs, len);
+		
+		// Call the Highlighter to fix words that may not match now
+		Element e = getParagraphElement(editor.getCaretPosition());
+		colourer.style(e.getStartOffset(), e.getEndOffset(), this);
 	}
-
 }
+	
+

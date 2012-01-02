@@ -9,9 +9,19 @@ keywords:
   - case
   - break
   - continue
+  - public
+  - private
+  - protected
+  - native
+  - this
+  - return
+  - class
+  - implements
+  - extends
+  
+types:
   - "true"
   - "false"
-  - this
   - boolean
   - byte
   - char
@@ -21,9 +31,14 @@ keywords:
   - int
   - long
   - short
-  - string
+  - String
+  - void
 
 regex:
    functions: ([A-Za-z0-9_]+ *)\(
    numbers: (?<=[^\w\d]|^)(((([0-9]+\.[0-9]*)|(\.[0-9]+))([eE][+\-]?[0-9]+)?[fFlL]?)|((([1-9][0-9]*)|0[0-7]*|(0[xX][0-9a-fA-F]+))(([uU][lL]?)|([lL][uU]?))?))(?=[^\w\d]|$)
-   comments: [ /\* , \*/ ]
+   strings: (\"(.*)\")
+   comments: 
+    -  /\* 
+    -  \*/
+    - \/\/
