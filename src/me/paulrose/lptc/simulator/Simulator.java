@@ -1,35 +1,49 @@
 package me.paulrose.lptc.simulator;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.util.Random;
 
 import javax.swing.JPanel;
 
-public class Simulator extends JPanel{
+public class Simulator{
 	
-	JPanel canvas;
+	private JPanel canvas;
+	public World world;
+	private long seed;
+	public static Random random;
 	
 	
-	public Simulator(){
+	
+	public Simulator(long seed)
+	{
+		// Init any settings needed for a general simulation
 		
-		setPreferredSize(new Dimension(720, 720));
+		// Create random generator
+		random = new Random();
+		if( seed == 0 ){
+			seed = random.nextLong();
+		}
+		random.setSeed(seed);
 		
+		
+		// Create new Simulation
+		newSimulation(36);
+	}
+	
+	
+	public void newSimulation(int participants)
+	{
+		// Create a new world for the right amount of participants
+		world = new World(participants);
+		
+	}
+	
+	public void draw(Graphics2D g2d)
+	{
+		world.draw(g2d);
 	}
 	
 	
 	
-	@Override
-	protected void paintComponent(Graphics g) {
-		
-		
-		// Paint white for now
-		
-		g.setColor(Color.BLACK);
-		g.fillRect(0,0,720, 720);
-		g.setColor(Color.WHITE);
-		g.drawChars("Simulator Screen".toCharArray(), 0, 16, 310, 320);
-		
-	}
 
 }

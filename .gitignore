@@ -25,3 +25,9 @@ local.properties
 # PDT-specific
 .buildpath
 
+# Sublime project files 
+*.sublime-project
+*.sublime-workspace
+
+#MACK shiz
+.DS_Store

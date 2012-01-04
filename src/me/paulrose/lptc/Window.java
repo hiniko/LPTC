@@ -9,11 +9,12 @@ import javax.swing.JMenuItem;
 
 import me.paulrose.lptc.editor.EditorPanel;
 import me.paulrose.lptc.simulator.Simulator;
+import me.paulrose.lptc.simulator.SimulatorWindow;
 
 public class Window extends JFrame {
 	
 	private EditorPanel editor;
-	private Simulator simulator;
+	private SimulatorWindow simulator;
 	private JMenuBar menuBar;
 
 	public Window(){
@@ -28,7 +29,7 @@ public class Window extends JFrame {
 		editor = new EditorPanel();
 		
 		// Create and instance of the simulator
-		simulator = new Simulator();
+		simulator = new SimulatorWindow();
 		
 		// Create Menubar
 		createMenuBar();
