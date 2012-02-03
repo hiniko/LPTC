@@ -3,50 +3,62 @@ package me.paulrose.lptc.simulator;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics2D;
+import java.util.Collections;
 import java.util.LinkedList;
+import java.util.List;
 
 public class World
 {
-	private static int SIDE = 100;
+	
+	private static final int MAX_WORLD_SIZE = 5000;
+	private static final int MIN_WORLD_SIZE = MAX_WORLD_SIZE / 10;
+	private static final double LOG_MODIFIER = 2.06370277381252;
+
 	public Dimension size;
 	private LinkedList<Entity> entities;
-	private int cx, cy, cr;
+	private int cx, cy, cr, players;
 	
-	World(int c)
+	World(int p)
 	{
-		// Check arguments
-		if( c < 2 )
-			throw new IllegalArgumentException("Colonies must be a least 2");
+
+		if (p <= 1)
+			throw new IllegalArgumentException("Need more than one player!!!");
 		
+		players = p;
 		// Create lists
 		entities = new LinkedList<Entity>(); 
 		
 		// Work out size of the world
-		int hw =  SIDE*c;
-		size = new Dimension(hw,hw);
-		// Work out angles of the colonies
-		int placement_radius = hw  / 2 - 100;
-		this.cr = placement_radius;
-		int placement_angle = 360 / c;
 		
-		System.out.println("Placement circle radius : " + placement_radius);
-		System.out.println("Placement angle : " + placement_angle);
+		int hw =   (int) (MAX_WORLD_SIZE * (Math.log10(players) /LOG_MODIFIER) + MIN_WORLD_SIZE) ;
+		
+		System.out.println("World Size is " + hw);
+		
+		size = new Dimension(hw,hw);
+		// Work out Placement of the colonies
+		int placement_radius = hw  / 2 - (hw / 10);
+		this.cr = placement_radius;
+	
 		
 		cx = (hw / 2);
 		cy = (hw / 2);
 		
-		System.out.println("WORLD:: " + hw);
-		System.out.println("PC:: " + cx + " - " + cy + " - " + cr);
-		
 		// Test Ant
 		//Ant humble_ant = new Ant(null, null);
 		
+		
+	}
+	
+	public void initWorld()
+	{
 		// Create the colonies 
-		for(int i=0; i<c; i++)
+		int placement_radius = size.width  / 2 - (size.width / 10);
+		cr = placement_radius;
+		int placement_angle = 360 / players;
+		for(int i=0; i<players; i++)
 		{
 			String name = "Player " + (i+1) ;
 			int a = (placement_angle * i);
-			System.out.println("Placement Angle: " + a);
 			double x =  this.cx + placement_radius * Math.cos(Math.toRadians(a));
 			double y =  this.cy + placement_radius * Math.sin(Math.toRadians(a));
 			
@@ -54,9 +66,22 @@ public class World
 		}
 	}
 	
+	public int getPlayers()
+	{
+		return this.players;
+	}
+	
 	public void update()
 	{
-		
+		for (Entity e : entities) 
+		{
+			e.update();
+		}
+	}
+	
+	public Dimension getSize()
+	{
+		return this.size;
 	}
 	
 	
@@ -75,12 +100,11 @@ public class World
 		g2d.drawOval(cx-(hw/2), cy-(hw/2), hw, hw);
 		
 		
+
 		for(Entity e : entities)
 		{
 			e.draw(g2d);
 		}
-
-		
 	}
 
 }

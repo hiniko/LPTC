@@ -5,19 +5,18 @@ import java.awt.Graphics2D;
 
 import javax.vecmath.Vector2d;
 
-public class Entity 
+public abstract class Entity 
 {
 
-	private Vector2d vec;
-	private String name;
-	private Dimension size, pos;
+	protected Vector2d pos;
+	protected String name;
+	protected Dimension size;
 	
-	Entity(String name, int x, int y)
+	public Entity(String name, int x, int y)
 	{
 		this.name = name;
-		this.vec = new Vector2d();
-		this.vec.x = x;
-		this.vec.y = y;
+		this.pos = new Vector2d(x,y);
+		this.size = new Dimension(0,0);
 	}
 	
 	public String getName()
@@ -25,8 +24,7 @@ public class Entity
 		return this.name;
 	}
 	
-	public void draw(Graphics2D g2d)
-	{
-		
-	}
+	public void update(){}
+	
+	public void draw(Graphics2D g2d){}
 }
