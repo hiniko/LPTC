@@ -12,19 +12,17 @@ public abstract class Ant extends MoveableEntity
 	protected int energy, view_radius;
 
 	
-	public Ant(String name, int x, int y, Colony c)
+	public Ant(String name, int x, int y, Colony c, World w)
 	{
-		super(name, x, y);
+		super(name, x, y, w);
 		
 		colony = c;
-		size = new Dimension(10,10 );
+		size = new Dimension(10,10);
 
 		// Starting values for the ant
 		energy = 100;
 		view_radius = 20;
-		
-		
-		
+
 	}
 	
 	public void update()
@@ -38,10 +36,7 @@ public abstract class Ant extends MoveableEntity
 	 */
 	public void run(){}
 
-	
-	
 
-	
 	public void draw(Graphics2D g2d)
 	{
 		// Position
@@ -50,32 +45,23 @@ public abstract class Ant extends MoveableEntity
 		// Half size
 		int hw =  (int)(size.width/2);
 		int hh = (int)(size.height/2);
-		// Quarter size
-		int qw = (int)(size.width/4);
-		int qh = (int)(size.height/4);
 		// Center position
 		int cx = x + hw;
 		int cy = y + hh;
-		
 		
 		// Create and assign transform
 		AffineTransform old_trans = g2d.getTransform();
 		AffineTransform new_trans = g2d.getTransform();
 		
-		new_trans.rotate(rotation, cx, cy);
+		new_trans.rotate(rotation - Math.toRadians(90), cx, cy);
 		g2d.setTransform(new_trans);
 		
-	
 		g2d.setColor(colony.getColor());
 		g2d.fillOval(x, y, size.width , size.height);
-		
-
 					
 		g2d.setColor(Color.RED);
 		g2d.drawLine(cx, y, x+hw, y+size.height);
 		g2d.fillRect(x, y+size.height, size.width, 1);
-		
-		
 		
 		// Restore old transformation
 		g2d.setTransform(old_trans);

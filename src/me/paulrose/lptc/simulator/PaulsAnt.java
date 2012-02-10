@@ -1,29 +1,37 @@
 package me.paulrose.lptc.simulator;
 
-import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-
-import javax.vecmath.Vector2d;
-
 public class PaulsAnt extends Ant{
 	
-	PaulsAnt(String name, int x, int y, Colony c)
+	PaulsAnt(String name, int x, int y, Colony c, World w)
 	{
-		super(name, x, y,c);
+		super(name, x, y,c, w);
+		
+		setRotation((int)(world.random.nextDouble() * 360));
 	}
 	
 	public void update()
 	{
 		super.update();
-		
 		run();
+	}
+	
+	public void randomDirection()
+	{
+		// HEad
+		dest.x = world.random.nextDouble() * world.getWidth();
+		dest.y = world.random.nextDouble() * world.getHeight();
+	}
+	
+	
+	public void walkForwards()
+	{
 		
 	}
 	
 	public void run()
 	{
 		// This is my logic for my ant
+		
 	}
 
 

@@ -13,9 +13,9 @@ public class MoveableEntity extends Entity
 	protected boolean atDestination;
 	
 
-	public MoveableEntity(String name, int x, int y)		
+	public MoveableEntity(String name, int x, int y, World w)		
 	{
-		super(name, x, y);
+		super(name, x, y, w);
 		
 		acel = 0.5;
 		vel = 0;
@@ -26,26 +26,31 @@ public class MoveableEntity extends Entity
 		atDestination = false;
 		
 		// HEad
-		dest.x = Simulator.instance().random.nextDouble() * Simulator.instance().getWorldSize().width;
-		dest.y = Simulator.instance().random.nextDouble() * Simulator.instance().getWorldSize().height;
+		dest.x = x;
+		dest.y = y;
+	}
 
+	public void setRotation(double rot)
+	{
+		//rotation = rot - (45 / (180/Math.PI));
+		rotation = Math.toRadians(rot) - Math.toRadians(90);
 	}
 	
-	public void randomDirection()
-	{
-		// HEad
-		dest.x = Simulator.instance().random.nextDouble() * Simulator.instance().getWorldSize().width;
-		dest.y = Simulator.instance().random.nextDouble() * Simulator.instance().getWorldSize().height;
-	}
 	
 	public void update()
 	{
 		// Work out the direction we have to go in and the length
-		direction =	new Vector2d(dest.x-pos.x, dest.y-pos.y);
+		//direction =	new Vector2d(dest.x-pos.x, dest.y-pos.y);
+		double sn = Math.sin(rotation);
+		double cs = Math.cos(rotation);
+		
+		
+		direction = new Vector2d(cs,sn);
+		
 		double distance = direction.length();
 
 		
-		rotation =  Math.atan2(direction.y, direction.x) - (90 / (180/Math.PI));
+	    // rotation =  Math.atan2(direction.y, direction.x) - (90 / (180/Math.PI));
 
 		// Normalise so we can move in that direction
 		direction.normalize(); 
@@ -59,19 +64,20 @@ public class MoveableEntity extends Entity
 		
 		int framesLeft = (int) (distance / vel);
 		
-		if(framesLeft == 0){
+/*		if(framesLeft == 0){
 			pos.x = dest.x;
 			pos.y = dest.y;
 			
 			atDestination = true;
 			vel = 0;
-			randomDirection();
 			
 		}else{
+		*/
 			// Calculate the new position
 			pos.x += direction.x * vel;
-			pos.y += direction.y * vel; 
-		}
+			pos.y += direction.y * vel;
+			atDestination = false;
+		//}
 	}
 	
 	

@@ -19,54 +19,19 @@ public class Simulator implements Runnable{
 	private World world;
 	private boolean running, paused;
 	
-	public Random random;
-	private static Simulator instance;
-	
-	
-	
-	private Simulator()
+	public Simulator()
 	{
-		random = new Random();
-		
-		seed = random.nextLong();
-		random.setSeed(seed); 
-		
 		running = false;
-		paused = false;
-		
-	}
+		paused = false;	
+	} 
+ 	
 	
-	public static Simulator instance()
+	public void createWorld(long s, int p)
 	{
-		if ( instance == null)
-		{
-			instance = new Simulator();
-		}
-		
-		return instance;
-	}
-	
-	public void createWorld(int players)
-	{
-		world = new World(players);
+		world = new World(s,p);
 		world.initWorld();
 	}
 	
-	public void setSeed(long seed)
-	{
-		this.random.setSeed(seed);
-		this.seed = seed;
-		
-		if(world != null)
-		{
-			world = new World(world.getPlayers());
-		}
-	}
-	
-	public static void addEntity(Entity e)
-	{
-		
-	}
 
 	public void draw(Graphics2D g2d)
 	{
@@ -77,8 +42,6 @@ public class Simulator implements Runnable{
 	{
 		return world.getSize();
 	}
-
-
 	@Override
 	public void run()
 	{
@@ -105,24 +68,19 @@ public class Simulator implements Runnable{
 						world.update();
 						accumulator -= STEP_TIME;
 						frameCount++;
-					}
-					
-					
-					try
-					{
-						Thread.sleep(STEP_TIME);
-					} catch (InterruptedException e)
-					{
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					
+					}	
 				}
 				
+				
+				try
+				{
+					Thread.sleep(STEP_TIME);
+				} catch (InterruptedException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 			}
-			// Finished with this run, Clean up
-			
-			System.out.println("\n World finished: Seed was " + seed);
 			
 		}
 	}

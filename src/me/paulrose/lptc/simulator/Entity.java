@@ -7,16 +7,21 @@ import javax.vecmath.Vector2d;
 
 public abstract class Entity 
 {
+	protected static int entityCount;
 
 	protected Vector2d pos;
 	protected String name;
 	protected Dimension size;
+	protected int ID;
+	protected World world;
 	
-	public Entity(String name, int x, int y)
+	public Entity(String n, int x, int y, World w)
 	{
-		this.name = name;
-		this.pos = new Vector2d(x,y);
-		this.size = new Dimension(0,0);
+		name = n;
+		pos = new Vector2d(x,y);
+		size = new Dimension(0,0);
+		ID = ++entityCount;
+		world = w;
 	}
 	
 	public String getName()

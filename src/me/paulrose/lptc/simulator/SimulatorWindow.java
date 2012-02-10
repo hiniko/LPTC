@@ -51,11 +51,11 @@ public class SimulatorWindow extends JPanel implements
 		// Create the Special panel that the simulation will be drawn to
 		viewerPanel = new SimulationPanel();
 		
-		// Create a simulation instance, for demonstration if anything
-		instance = Simulator.instance();
+		// Create a simulation instance and a new world 
+		instance = new Simulator();
+		instance.createWorld(123456, 4);
 		
-		instance.setSeed(123456);
-		instance.createWorld(2);
+		
 		
 		// Create the thread that the simulation will run on 
 		simulationThread = new Thread(instance);
@@ -72,14 +72,15 @@ public class SimulatorWindow extends JPanel implements
 			public void actionPerformed(ActionEvent e)
 			{
 				System.out.println("Start/Stop Button Pressed");
-				if(!simulationThread.isAlive()){
+				
+				if(!instance.isRunning()){
 					System.out.println("Starting the Simulation");
 					simulationThread.start();
 					JButton button = (JButton) e.getSource();
 					button.setName("Stop");
 				}else{
 					System.out.println("Stopping the simulation");
-					instance.stop();
+					instance.pause();
 					JButton button = (JButton) e.getSource();
 					button.setName("Start");
 				}
@@ -196,11 +197,6 @@ public class SimulatorWindow extends JPanel implements
 		protected void paintComponent(Graphics g) {
 			
 			Graphics2D g2d = (Graphics2D)g;
-			
-			String clip = g2d.getClip().toString();
-			
-			
-			
 			
 			if(instance == null){
 				// Paint white for now
