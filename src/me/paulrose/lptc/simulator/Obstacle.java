@@ -1,12 +1,12 @@
 package me.paulrose.lptc.simulator;
 
-import java.awt.Dimension;
+import java.awt.Point;
 
 public class Obstacle
 {
 	
 	
-	Obstacle(Dimension s, int type)
+	Obstacle(Point s, int type)
 	{
 		
 		

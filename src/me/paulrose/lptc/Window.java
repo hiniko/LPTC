@@ -25,6 +25,8 @@ public class Window extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setResizable(false);
 		
+		
+		
 		// Create an instance of the editor
 		editor = new EditorPanel();
 		
@@ -40,6 +42,7 @@ public class Window extends JFrame {
 		add(simulator, BorderLayout.CENTER);
 					
 		setVisible(true); 
+		createBufferStrategy(3);
 		
 	}
 	

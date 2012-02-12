@@ -3,6 +3,7 @@ package me.paulrose.lptc.simulator;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -53,7 +54,7 @@ public class SimulatorWindow extends JPanel implements
 		
 		// Create a simulation instance and a new world 
 		instance = new Simulator();
-		instance.createWorld(123456, 4);
+		instance.createWorld(123456, 50);
 		
 		
 		
@@ -71,18 +72,28 @@ public class SimulatorWindow extends JPanel implements
 			@Override
 			public void actionPerformed(ActionEvent e)
 			{
-				System.out.println("Start/Stop Button Pressed");
 				
 				if(!instance.isRunning()){
 					System.out.println("Starting the Simulation");
 					simulationThread.start();
 					JButton button = (JButton) e.getSource();
-					button.setName("Stop");
+					button.setName("Pause");
 				}else{
-					System.out.println("Stopping the simulation");
-					instance.pause();
-					JButton button = (JButton) e.getSource();
-					button.setName("Start");
+					// Instance is running check if paused
+					if(!instance.isPaused())
+					{
+						instance.pause();
+						JButton button = (JButton) e.getSource();
+						button.setName("Un-pause");
+						System.out.println("Simulation Paused");
+					}else{
+						// UnPause the instance
+						System.out.println("Unpauseing the Simulation");
+						instance.unpause();
+						JButton button = (JButton) e.getSource();
+						button.setName("Pause");
+					}
+					
 				}
 				
 			}
@@ -99,9 +110,6 @@ public class SimulatorWindow extends JPanel implements
 		addMouseWheelListener(this);
 		
 	}
-	
-
-	
 
 	@Override
 	public void mousePressed(MouseEvent e)
@@ -156,6 +164,7 @@ public class SimulatorWindow extends JPanel implements
 	@Override
 	public void mouseWheelMoved(MouseWheelEvent e)
 	{
+		// TODO This needs tweeking as the mac trackpad makes this faster then it really is
 		if(e.getWheelRotation() < 0)
 			this.zoom -= 0.008 * e.getScrollAmount();
 		else
@@ -191,6 +200,7 @@ public class SimulatorWindow extends JPanel implements
 		
 			
 			updater.start();
+			setDoubleBuffered(true);
 		}
 		
 		@Override
@@ -215,8 +225,8 @@ public class SimulatorWindow extends JPanel implements
 				AffineTransform new_trans = g2d.getTransform();
 				
 				// Work out the translation to center the world on screen and for zooming
-				int center_x = (int) ((getWidth()/2) - (instance.getWorldSize().width * zoom)/ 2);
-				int center_y = (int) ((getHeight()/2) - (instance.getWorldSize().height * zoom)/2);
+				int center_x = (int) ((getWidth()/2) - (instance.getWorldSize().x * zoom)/ 2);
+				int center_y = (int) ((getHeight()/2) - (instance.getWorldSize().y * zoom)/2);
 				
 				// Add the centering, zoom and screen positioning
 				new_trans.translate(center_x, center_y);
@@ -238,8 +248,6 @@ public class SimulatorWindow extends JPanel implements
 			
 			}	
 		}
-		
-		
 	}
 	
 	@Override

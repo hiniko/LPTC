@@ -1,27 +1,31 @@
 package me.paulrose.lptc.simulator;
 
-import java.awt.Dimension;
-import java.awt.Graphics2D;
 
-import javax.vecmath.Vector2d;
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+
 
 public abstract class Entity 
 {
 	protected static int entityCount;
 
-	protected Vector2d pos;
 	protected String name;
-	protected Dimension size;
+	protected Point size;
+
+	protected Point pos;
 	protected int ID;
 	protected World world;
+	protected BufferedImage sprite;
+	protected boolean redrawSprite;
 	
-	public Entity(String n, int x, int y, World w)
+	public Entity(String n, int x, int y, World wo)
 	{
 		name = n;
-		pos = new Vector2d(x,y);
-		size = new Dimension(0,0);
+		pos = new Point(x,y);
+		size = new Point(0,0);
 		ID = ++entityCount;
-		world = w;
+		world = wo;
+		redrawSprite = false;
 	}
 	
 	public String getName()
@@ -30,6 +34,8 @@ public abstract class Entity
 	}
 	
 	public void update(){}
+	
+	public void drawSprite(){}
 	
 	public void draw(Graphics2D g2d){}
 }

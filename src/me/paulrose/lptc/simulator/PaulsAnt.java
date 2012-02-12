@@ -6,7 +6,7 @@ public class PaulsAnt extends Ant{
 	{
 		super(name, x, y,c, w);
 		
-		setRotation((int)(world.random.nextDouble() * 360));
+		setRotation(world.random.nextInt(360 + 1));
 	}
 	
 	public void update()
@@ -22,11 +22,6 @@ public class PaulsAnt extends Ant{
 		dest.y = world.random.nextDouble() * world.getHeight();
 	}
 	
-	
-	public void walkForwards()
-	{
-		
-	}
 	
 	public void run()
 	{

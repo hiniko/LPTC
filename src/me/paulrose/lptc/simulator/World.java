@@ -1,12 +1,15 @@
 package me.paulrose.lptc.simulator;
 
 import java.awt.Color;
-import java.awt.Dimension;
+import java.awt.Point;
 import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class World
 {
@@ -18,17 +21,26 @@ public class World
 	
 	public Random random;
 	
-	private Dimension size;
-	private List<Entity> entities;
+	private Point size;
+	private CopyOnWriteArrayList<Entity> entities;
 	private LinkedList<Entity> newEntities;
-	private int cx, cy, cr, players;
+	private int cx, cy, cr, players, updateFrameCount;
 	private long seed;
-	
+	private Simulator simulator;
 	public AntFactory antFactory;
 	public ColonyFactory colonyFactory;
 	
-	public World(long s, int p)
+	public World(long s, int p, Simulator sim)
 	{	
+		// Referece to the simulator 
+		// TODO have a shutdown method that will null the reference to avoid 
+		// cyclic references
+		simulator = sim;
+		
+		// How many times to output stats
+		updateFrameCount = Simulator.UPS * 2;
+		
+		
 		random = new Random();
 		
 		// Set up random generator
@@ -51,7 +63,7 @@ public class World
 		{
 			// work out world size
 			int hw = (int) (MAX_WORLD_SIZE * (Math.log10(players) /LOG_MODIFIER) + MIN_WORLD_SIZE) ;
-			size = new Dimension(hw,hw);
+			size = new Point(hw,hw);
 			// Work out Placement of the colonies
 			cr = hw  / 2 - (hw / 10);
 			// Center point of the world
@@ -61,13 +73,13 @@ public class World
 		else
 		{
 			int hw = 500;
-			size = new Dimension(hw, hw);
+			size = new Point(hw, hw);
 			cr = hw  / 2 - (hw / 10);
 			cx = hw /2;
 			cy = hw /2;
 		} 
 		
-		System.out.println("World Size is " + size.width + "x" + size.height);
+		System.out.println("World Size is " + size.x + "x" + size.y);
 		
 		
 	}
@@ -75,16 +87,15 @@ public class World
 	public void initWorld()
 	{
 		// Create Lists
-		entities = Collections.synchronizedList(new LinkedList<Entity>());
+		entities = new CopyOnWriteArrayList<Entity>();
 		newEntities = new LinkedList<Entity>();
 		
 		// Create the factories
 		antFactory = new AntFactory(this);
 		colonyFactory = new ColonyFactory(this);
 		
-		
 		// Create the colonies 
-		int placement_radius = size.width  / 2 - (size.width / 10);
+		int placement_radius = size.x  / 2 - (size.x / 10);
 		cr = placement_radius;
 		int placement_angle = 360 / players;
 		
@@ -95,13 +106,14 @@ public class World
 			double x =  this.cx + placement_radius * Math.cos(Math.toRadians(a));
 			double y =  this.cy + placement_radius * Math.sin(Math.toRadians(a));
 			
-			colonyFactory.create(x, y, name, 1000, "PaulsAnt");
+			colonyFactory.create(name, (int)x, (int)y, 1000, "PaulsAnt");
 		}
 	}
 	
 	public void addEntity(Entity e)
 	{
-		newEntities.add(e);
+		//newEntities.add(e);
+		entities.add(e);
 	}
 	
 	public int getNumberOfPlayers()
@@ -114,35 +126,44 @@ public class World
 		// Check if there are any new entities to add to the entity list
 		// This is to avoid modification of the entities list during iterations
 		// which would cause ConcurrentModificationExceptions
-		
-		if (newEntities.size() > 0)
-		{
-			entities.add(newEntities.pop());
-		}
-		
+/*
 		synchronized(entities)
 		{
-			for (Entity e : entities) 
+			for(Entity e : newEntities)
 			{
-				e.update();
+				entities.add(e);
 			}
+		}
+*/
+		newEntities.clear();
+		
+		for (Entity e : entities) 
+		{
+			e.update();
+		}
+		
+		// Incremental informational updates
+		if(simulator.getFrames() % updateFrameCount == 0)
+		{
+			System.out.println("Entity count : " + entities.size());
 		}
 	}
 	
-	public Dimension getSize()
+	public Point getSize()
 	{
-		return this.size;
+		return size;
 	}
 	
 	
-	public double getHeight()
+	
+	public int getHeight()
 	{
-		return size.height;
+		return size.y;
 	}
 	
-	public double getWidth()
+	public int getWidth()
 	{
-		return size.width;
+		return size.x;
 	}
 	
 	public void draw(Graphics2D g2d)
@@ -150,22 +171,18 @@ public class World
 		// Draw background and that
 		g2d.setColor(Color.WHITE);
 		g2d.setBackground(Color.WHITE);
-		g2d.fillRect(0, 0, size.width, size.height);
+		g2d.fillRect(0, 0, size.x, size.y);
 		g2d.setColor(Color.BLACK);
-		g2d.drawRect(0, 0, size.width, size.height);
+		g2d.drawRect(0, 0, size.x, size.y);
 		
 		g2d.setColor(Color.GREEN);
 		int hw = cr*2;
 		
 		g2d.drawOval(cx-(hw/2), cy-(hw/2), hw, hw);
-		
-		synchronized(entities)
+
+		for(Entity e : entities)
 		{
-			for(Entity e : entities)
-			{
-				e.draw(g2d);
-			}
+			e.draw(g2d);
 		}
 	}
-
 }
