@@ -29,14 +29,14 @@ public class Simulator implements Runnable{
 	
 	public void createWorld(long s, int p)
 	{
-		world = new World(s,p, this);
+	//	world = new World(s,p, this);
 		world.initWorld();
 	}
 	
 
 	public void draw(Graphics2D g2d)
 	{
-		world.draw(g2d);
+	//	world.draw(g2d);
 	}
 	
 	public Point getWorldSize()
