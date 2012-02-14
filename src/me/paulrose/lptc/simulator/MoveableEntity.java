@@ -5,6 +5,8 @@ import java.awt.Graphics2D;
 
 import javax.vecmath.Vector2d;
 
+import org.newdawn.slick.Graphics;
+
 public class MoveableEntity extends Entity
 {
 	
@@ -132,7 +134,7 @@ public class MoveableEntity extends Entity
 	}
 	
 	
-	public void draw(Graphics2D g2d)
+	public void draw(Graphics g2d)
 	{
 		super.draw(g2d);
 		

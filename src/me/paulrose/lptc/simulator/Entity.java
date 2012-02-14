@@ -4,6 +4,9 @@ package me.paulrose.lptc.simulator;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+
 
 public abstract class Entity 
 {
@@ -15,7 +18,7 @@ public abstract class Entity
 	protected Point pos;
 	protected int ID;
 	protected World world;
-	protected BufferedImage sprite;
+	protected Image sprite;
 	protected boolean redrawSprite;
 	
 	public Entity(String n, int x, int y, World wo)
@@ -37,5 +40,5 @@ public abstract class Entity
 	
 	public void drawSprite(){}
 	
-	public void draw(Graphics2D g2d){}
+	public void draw(Graphics g2d){}
 }

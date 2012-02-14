@@ -1,11 +1,8 @@
 package me.paulrose.lptc.simulator;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsEnvironment;
-import java.awt.geom.AffineTransform;
-import java.awt.image.AffineTransformOp;
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.geom.Rectangle;
 
 
 public abstract class Ant extends MoveableEntity
@@ -13,7 +10,7 @@ public abstract class Ant extends MoveableEntity
 	
 	protected Colony colony;
 	protected int energy, view_radius;
-	protected static final int ANT_SIZE = 10;
+	protected static final int SIZE = 10;
 
 	
 	public Ant(String n, int x, int y, Colony c, World wo)
@@ -21,8 +18,8 @@ public abstract class Ant extends MoveableEntity
 		super(n, x, y, wo);
 		
 		colony = c;
-		size.x = ANT_SIZE;
-		size.y = ANT_SIZE;
+		size.x = SIZE;
+		size.y = SIZE;
 		
 		// Starting values for the ant
 		energy = 100;
@@ -41,7 +38,7 @@ public abstract class Ant extends MoveableEntity
 	 */
 	public void run(){}
 
-	public void draw(Graphics2D g2d)
+	public void draw(Graphics g)
 	{
 		int x = (int)pos.x;
 		int y = (int)pos.y;
@@ -50,17 +47,25 @@ public abstract class Ant extends MoveableEntity
 		int hw = (int)size.x /2;
 		int hh = (int)size.y /2;
 		
-		AffineTransform rotation_trans = new AffineTransform();
-		rotation_trans.rotate(rotation - Math.toRadians(90), hw, hh);
+		/*
+		//if(world.drawRotation() && world.drawClip.contains(x, y))
+		if(world.drawClip.contains(x, y))
+		{
+			colony.antSprite.setRotation((float)Math.toDegrees(rotation)-90);
+			g.drawImage(colony.antSprite, x, y);
+		}
+		else
+		{
+			//g.drawImage(colony.antSprite, x, y);
+		}
+		*/
 		
-		g2d.drawImage(colony.antSprite, new AffineTransformOp(rotation_trans, 
-				AffineTransformOp.TYPE_BICUBIC), x - hw, y - hh);
+		//colony.antSprite.setRotation((float)Math.toDegrees(rotation)-90);
+		g.drawImage(colony.antSprite, x, y);
 		
 		
-
-		
-		
-		
+	
 	}
+		
 
 }

@@ -11,5 +11,8 @@ public class ColonyFactory extends BaseFactory
 		world.addEntity(c);
 		return c;
 	}
+	
+	
+	
 }
 

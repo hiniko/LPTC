@@ -1,8 +1,6 @@
 package me.paulrose.lptc.simulator;
 
-import java.awt.Color;
 import java.awt.Point;
-import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.Collections;
 import java.util.Iterator;
@@ -10,6 +8,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.newdawn.slick.Color;
+import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
+import org.newdawn.slick.SlickException;
+import org.newdawn.slick.geom.Rectangle;
 
 public class World
 {
@@ -25,21 +29,17 @@ public class World
 	private CopyOnWriteArrayList<Entity> entities;
 	private LinkedList<Entity> newEntities;
 	private int cx, cy, cr, players, updateFrameCount;
-	private long seed;
-	private Simulator simulator;
+	private long seed, updates;
 	public AntFactory antFactory;
 	public ColonyFactory colonyFactory;
+	private boolean rotationDisabled;
 	
-	public World(long s, int p, Simulator sim)
+	private boolean drawRotation;
+	public Rectangle drawClip;
+	
+	public World(long s, int p)
 	{	
-		// Referece to the simulator 
-		// TODO have a shutdown method that will null the reference to avoid 
-		// cyclic references
-		simulator = sim;
-		
-		// How many times to output stats
-		updateFrameCount = Simulator.UPS * 2;
-		
+			
 		
 		random = new Random();
 		
@@ -81,6 +81,7 @@ public class World
 		
 		System.out.println("World Size is " + size.x + "x" + size.y);
 		
+		drawClip = new Rectangle(0,0,0,0);
 		
 	}
 	
@@ -123,19 +124,7 @@ public class World
 	
 	public void update()
 	{
-		// Check if there are any new entities to add to the entity list
-		// This is to avoid modification of the entities list during iterations
-		// which would cause ConcurrentModificationExceptions
-/*
-		synchronized(entities)
-		{
-			for(Entity e : newEntities)
-			{
-				entities.add(e);
-			}
-		}
-*/
-		newEntities.clear();
+
 		
 		for (Entity e : entities) 
 		{
@@ -143,10 +132,13 @@ public class World
 		}
 		
 		// Incremental informational updates
-		if(simulator.getFrames() % updateFrameCount == 0)
+		if(updates % 100 == 0)
 		{
 			System.out.println("Entity count : " + entities.size());
+			
 		}
+		
+		updates++;
 	}
 	
 	public Point getSize()
@@ -166,23 +158,33 @@ public class World
 		return size.x;
 	}
 	
-	public void draw(Graphics2D g2d)
+	public void draw(Graphics g)
 	{
 		// Draw background and that
-		g2d.setColor(Color.WHITE);
-		g2d.setBackground(Color.WHITE);
-		g2d.fillRect(0, 0, size.x, size.y);
-		g2d.setColor(Color.BLACK);
-		g2d.drawRect(0, 0, size.x, size.y);
 		
-		g2d.setColor(Color.GREEN);
+		g.setColor(Color.white);
+		g.fillRect(0, 0, size.x, size.y);
+		
+		g.setColor(Color.green);
 		int hw = cr*2;
-		
-		g2d.drawOval(cx-(hw/2), cy-(hw/2), hw, hw);
+		g.drawOval(cx-(hw/2), cy-(hw/2), hw, hw);
 
 		for(Entity e : entities)
 		{
-			e.draw(g2d);
+			e.draw(g);
 		}
+	}
+
+	public void disableRotation() {
+		drawRotation = false;
+	}
+	
+	public void enableRotation(){
+		drawRotation = true;
+	}
+	
+	public boolean drawRotation()
+	{
+		return drawRotation;
 	}
 }
