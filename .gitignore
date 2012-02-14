@@ -31,3 +31,5 @@ local.properties
 
 #MACK shiz
 .DS_Store
+
+resources/lwjgl/*
