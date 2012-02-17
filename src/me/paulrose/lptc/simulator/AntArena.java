@@ -14,7 +14,7 @@ import com.sun.xml.internal.ws.api.server.Container;
 public class AntArena extends BasicGame{
 
 	private float ZOOM_STEP = 0.05f;
-	private float ZOOM_MIN = 0.5f;
+	private float ZOOM_MIN = 0.2f;
 	private float ZOOM_MAX	= 2.5f;
 		
 	private World world;
@@ -34,7 +34,7 @@ public class AntArena extends BasicGame{
 	public void init(GameContainer container) throws SlickException {
 		
 		// Container settings
-		container.setMinimumLogicUpdateInterval(32);
+		container.setMinimumLogicUpdateInterval(16);
 		container.setClearEachFrame(true);
 		container.setVSync(true);
 		container.setShowFPS(true);
@@ -45,12 +45,9 @@ public class AntArena extends BasicGame{
 		zoom = 1f;
 
 		// Create the world
-		world = new World(123456, 4);
+		world = new World(123456, 50);
 		world.initWorld();
-		
-		
-		
-		
+
 	}
 		
 
@@ -60,7 +57,7 @@ public class AntArena extends BasicGame{
 		
 		if(!container.isPaused())
 		{
-			world.update();
+			world.update(delta);
 		}
 	}
 	
@@ -68,8 +65,10 @@ public class AntArena extends BasicGame{
 	@Override
 	public void render(GameContainer container, Graphics g) throws SlickException {
 		
+	
 		int w = container.getWidth();
 		int h = container.getHeight();
+
 		
 		// Fill the world Colours
 		g.setColor(Color.darkGray);
@@ -87,7 +86,17 @@ public class AntArena extends BasicGame{
 		
 		g.pushTransform();
 		
-		world.drawClip.setBounds(center_x + viewer_x, center_y + viewer_y, w/zoom, h/zoom);
+		g.setColor(Color.black);
+		g.setLineWidth(2);
+		
+		float x = -(viewer_x + (center_x / zoom));
+		float y = -(viewer_y + (center_y / zoom));
+		float w2 = w /zoom ;
+		float h2 = h /zoom;
+		
+		world.drawClip.setBounds( x, y, w2, h2);
+
+		g.setWorldClip(x, y, w2, h2);
 		
 		if (zoom < 0.8)
 			world.disableRotation();
@@ -96,11 +105,9 @@ public class AntArena extends BasicGame{
 		
 		world.draw(g);
 		
-		/*
-		g.setColor(Color.black);
-		g.setLineWidth(2);
-		g.drawRect(center_x + viewer_x, center_y + viewer_y,  w/zoom, h/zoom);
-		*/
+		Ant.drawCount = 0;
+		world.draw(g);	
+		
 		
 		
 		g.popTransform();

@@ -20,9 +20,9 @@ public class MoveableEntity extends Entity
 	{
 		super(name, x, y, wo);
 		
-		acel = 0.5;
+		acel = 0.01;
 		vel = 0;
-		maxVel = 2;
+		maxVel = 0.1;
 		
 		dest = new Vector2d(x,y);
 		
@@ -37,12 +37,13 @@ public class MoveableEntity extends Entity
 	}
 	
 	
-	public void update()
+	public void update(int delta)
 	{
 		
 		//bounceRotation = Math.toRadians( world.random.nextInt(180 - 135 + 1) + 135 ); 
 		bounceRotation = Math.toRadians(world.random.nextInt(180 + 1));
 		//bounceRotation = Math.toRadians(135);
+		
 		if (world.random.nextDouble() > 0.5)
 			bounceRotation = -bounceRotation;
 	
@@ -74,12 +75,12 @@ public class MoveableEntity extends Entity
 		
 		//
 		if(walkToActive)
-			walkToPoint();
+			walkToPoint(delta);
 		else
-			walkForwards();
+			walkForwards(delta);
 	}
 	
-	public void walkForwards()
+	public void walkForwards(int delta)
 	{
 		// Work out the direction we have to go in and the length
 		double sn = Math.sin(rotation);
@@ -92,18 +93,20 @@ public class MoveableEntity extends Entity
 		direction.normalize(); 
 		
 		// work out how much we should move this update
-		vel += acel;
+		vel += acel * delta;
 		if(vel >= maxVel)
 			vel = maxVel;
 		
 		// Calculate the new position
-		pos.x += direction.x * vel;
-		pos.y += direction.y * vel;
+		pos.x += (direction.x * vel) * delta;
+		pos.y += (direction.y * vel) * delta;
+		
+		
 		
 		
 	}
 	
-	public void walkToPoint()
+	public void walkToPoint(int delta)
 	{	
 		direction =	new Vector2d(dest.x-pos.x, dest.y-pos.y);
 		rotation =  Math.atan2(direction.y, direction.x);
@@ -126,8 +129,8 @@ public class MoveableEntity extends Entity
 			
 		}else{
 			// Calculate the new position
-			pos.x += direction.x * vel;
-			pos.y += direction.y * vel;
+			pos.x += direction.x * vel / delta;
+			pos.y += direction.y * vel / delta;
 			atDestination = false;
 		}
 		

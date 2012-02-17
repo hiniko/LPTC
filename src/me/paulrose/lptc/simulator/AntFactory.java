@@ -35,7 +35,7 @@ public class AntFactory extends BaseFactory
 	}
 	
 	
-	public Image createAntSprite(Color c)
+	public Image createAntSprite(Color c, boolean d)
 	{
 		
 		try
@@ -46,12 +46,15 @@ public class AntFactory extends BaseFactory
 			g.clear();
 			g.setColor(c);
 			g.fillOval(0, 0, Ant.SIZE, Ant.SIZE);
-			g.setAntiAlias(true);
-						
-			g.setColor(Color.red);
-			g.drawLine(Ant.SIZE/2-1, 0, Ant.SIZE/2-1, Ant.SIZE-1);
-			g.drawLine(Ant.SIZE/2, 0, Ant.SIZE/2, Ant.SIZE);
-			g.drawLine(0, Ant.SIZE-1, Ant.SIZE, Ant.SIZE-1);
+			
+			if (d)
+			{
+				g.setColor(Color.red);
+				g.drawLine(Ant.SIZE/2-1, 0, Ant.SIZE/2-1, Ant.SIZE-1);
+				g.drawLine(Ant.SIZE/2, 0, Ant.SIZE/2, Ant.SIZE);
+				g.drawLine(0, Ant.SIZE-1, Ant.SIZE, Ant.SIZE-1);
+			}
+			
 			
 			Image s = new Image(Ant.SIZE, Ant.SIZE);
 			

@@ -36,7 +36,7 @@ public abstract class Entity
 		return this.name;
 	}
 	
-	public void update(){}
+	public void update(int delta){}
 	
 	public void drawSprite(){}
 	

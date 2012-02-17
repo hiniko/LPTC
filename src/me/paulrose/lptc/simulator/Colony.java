@@ -20,7 +20,7 @@ public class Colony extends Entity
 	private int diameter, maxAnts, antCost;
 	Color colour;
 	private long food;
-	public Image sprite, antSprite;
+	public Image antSpriteFull, antSpriteMin;
 	
 	Colony(String n, int x, int y, String c, long f, World wo)
 	{
@@ -40,7 +40,8 @@ public class Colony extends Entity
 		colour = new Color(r,g,b);
 		
 		// Flag a new buffered image to be created
-		antSprite = world.antFactory.createAntSprite(colour);
+		antSpriteFull = world.antFactory.createAntSprite(colour,false);
+		antSpriteMin = world.antFactory.createAntSprite(colour, true);
 		
 		redrawSprite = false;
 		
@@ -48,40 +49,40 @@ public class Colony extends Entity
 		// List of all ants
 		ants = new LinkedList<Ant>();
 		
-		maxAnts = 2;
+		maxAnts = 10;
 		antCost = 100;
 		food = maxAnts * antCost; //world.random.nextInt(101);
 
 	}
 	
-	public void update()
+	public void update(int delta)
 	{
-		super.update();
+		super.update(delta);
 		// update the sprite if needed
 
-			
-		
-		
 		if(ants.size() <= maxAnts && food >= antCost)
 		{
 			ants.add(world.antFactory.createAnt(antClass, (int)pos.x, (int)pos.y, this));
 			food -= antCost;
 		}
 		
-		food++;
+		//food++;
 		
 
 	}
 	
 	public void draw(Graphics g)
 	{	
-		int x = (int)pos.x;
-		int y = (int)pos.y;
-		int w = (int)size.x;
-		int h = (int)size.y;
+		float x = (float)pos.x;
+		float y = (float)pos.y;
+		float w = (float)size.x;
+		float h = (float)size.y;
+		float hw = w /2;
+		float hh = h /2;
+		
 		
 		g.setColor(colour);
-		g.fillOval((float)pos.x, (float)pos.y, (float)size.x, (float)size.y);
+		g.fillOval(x - hw, y-hh, w, h);
 		
 	}
 
@@ -89,6 +90,15 @@ public class Colony extends Entity
 	public Color getColor()
 	{
 		return colour;
+	}
+	
+	public Image getAntSprite()
+	{
+		if(world.isRotationEnabled())
+			return antSpriteMin;
+		else
+			return antSpriteFull;
+		
 	}
 	
 	

@@ -32,9 +32,8 @@ public class World
 	private long seed, updates;
 	public AntFactory antFactory;
 	public ColonyFactory colonyFactory;
-	private boolean rotationDisabled;
+	private boolean drawRotationEnabled;
 	
-	private boolean drawRotation;
 	public Rectangle drawClip;
 	
 	public World(long s, int p)
@@ -122,13 +121,13 @@ public class World
 		return players;
 	}
 	
-	public void update()
+	public void update(int delta)
 	{
 
 		
 		for (Entity e : entities) 
 		{
-			e.update();
+			e.update(delta);
 		}
 		
 		// Incremental informational updates
@@ -175,16 +174,18 @@ public class World
 		}
 	}
 
-	public void disableRotation() {
-		drawRotation = false;
-	}
-	
-	public void enableRotation(){
-		drawRotation = true;
-	}
-	
-	public boolean drawRotation()
+	public void disableRotation() 
 	{
-		return drawRotation;
+		drawRotationEnabled = false;
+	}
+	
+	public void enableRotation()
+	{
+		drawRotationEnabled = true;
+	}
+	
+	public boolean isRotationEnabled()
+	{
+		return drawRotationEnabled;
 	}
 }

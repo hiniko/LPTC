@@ -9,9 +9,9 @@ public class PaulsAnt extends Ant{
 		setRotation(world.random.nextInt(360 + 1));
 	}
 	
-	public void update()
+	public void update(int delta)
 	{
-		super.update();
+		super.update(delta);
 		run();
 	}
 	

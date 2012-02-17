@@ -2,6 +2,7 @@ package me.paulrose.lptc.simulator;
 
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
+import org.newdawn.slick.Image;
 import org.newdawn.slick.geom.Rectangle;
 
 
@@ -11,6 +12,7 @@ public abstract class Ant extends MoveableEntity
 	protected Colony colony;
 	protected int energy, view_radius;
 	protected static final int SIZE = 10;
+	public static int drawCount = 0;
 
 	
 	public Ant(String n, int x, int y, Colony c, World wo)
@@ -27,9 +29,9 @@ public abstract class Ant extends MoveableEntity
 
 	}
 	
-	public void update()
+	public void update(int delta)
 	{
-		super.update();
+		super.update(delta);
 		run();
 	}
 	
@@ -47,24 +49,19 @@ public abstract class Ant extends MoveableEntity
 		int hw = (int)size.x /2;
 		int hh = (int)size.y /2;
 		
-		/*
-		//if(world.drawRotation() && world.drawClip.contains(x, y))
-		if(world.drawClip.contains(x, y))
+		Image sprite = colony.getAntSprite();
+		
+		
+		if(world.isRotationEnabled() && g.getWorldClip().contains(x, y))
 		{
-			colony.antSprite.setRotation((float)Math.toDegrees(rotation)-90);
-			g.drawImage(colony.antSprite, x, y);
+			sprite.setRotation((float)Math.toDegrees(rotation)-90);
+			g.drawImage(sprite, x, y);
+			drawCount++;
 		}
-		else
+		else if (world.drawClip.contains(x, y))
 		{
-			//g.drawImage(colony.antSprite, x, y);
-		}
-		*/
-		
-		//colony.antSprite.setRotation((float)Math.toDegrees(rotation)-90);
-		g.drawImage(colony.antSprite, x, y);
-		
-		
-	
+			g.drawImage(sprite, x, y);
+		}	
 	}
 		
 
