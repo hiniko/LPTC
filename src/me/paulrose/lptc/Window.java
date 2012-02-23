@@ -1,12 +1,10 @@
 package me.paulrose.lptc;
 
 import java.awt.BorderLayout;
-import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,7 +14,6 @@ import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import org.newdawn.slick.CanvasGameContainer;
-import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 
 import me.paulrose.lptc.editor.EditorPanel;
@@ -46,7 +43,7 @@ public class Window extends JFrame {
 			e.printStackTrace();
 		}
 		
-		// Create Menubar
+		// Create menu bar
 		createMenuBar();
 		createControlBar();
 		
@@ -64,8 +61,6 @@ public class Window extends JFrame {
 		});
 		
 		setVisible(true);
-		
-
 		
 	}
 	
@@ -99,7 +94,7 @@ public class Window extends JFrame {
 		pause.addActionListener(new ActionListener(){
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				canvas.getContainer().pause();
 			}
 		});
@@ -110,7 +105,7 @@ public class Window extends JFrame {
 		resume.addActionListener(new ActionListener(){
 
 			@Override
-			public void actionPerformed(ActionEvent arg0) {
+			public void actionPerformed(ActionEvent e) {
 				canvas.getContainer().resume();
 			}
 
@@ -131,13 +126,12 @@ public class Window extends JFrame {
 		
 		// Create the file menu
 		menu = new JMenu("File");
+		
 		// Items in the file menu
 		item = new JMenuItem("New Simulation");
 		menu.add(item);
 		
 		menuBar.add(menu);
-		
-		
 		
 	}
 }

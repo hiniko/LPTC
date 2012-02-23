@@ -2,6 +2,7 @@ package me.paulrose.lptc.simulator;
 
 import java.awt.Point;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
@@ -27,14 +28,17 @@ public class World
 	
 	private Point size;
 	private CopyOnWriteArrayList<Entity> entities;
-	private LinkedList<Entity> newEntities;
 	private int cx, cy, cr, players, updateFrameCount;
 	private long seed, updates;
 	public AntFactory antFactory;
 	public ColonyFactory colonyFactory;
 	private boolean drawRotationEnabled;
 	
-	public Rectangle drawClip;
+	private ArrayList<Entity> qtTestResults;
+	
+	private QuadTree qtree;
+	
+	public Rectangle drawClip, qtAreaTest;
 	
 	public World(long s, int p)
 	{	
@@ -78,9 +82,13 @@ public class World
 			cy = hw /2;
 		} 
 		
+		qtree = new QuadTree(0,0, size.x, size.y, 5, 5);
+		//qtree.preDivide();
+		
 		System.out.println("World Size is " + size.x + "x" + size.y);
 		
 		drawClip = new Rectangle(0,0,0,0);
+		qtAreaTest = new Rectangle(145,167,356,267);
 		
 	}
 	
@@ -88,7 +96,6 @@ public class World
 	{
 		// Create Lists
 		entities = new CopyOnWriteArrayList<Entity>();
-		newEntities = new LinkedList<Entity>();
 		
 		// Create the factories
 		antFactory = new AntFactory(this);
@@ -114,6 +121,8 @@ public class World
 	{
 		//newEntities.add(e);
 		entities.add(e);
+		if(e instanceof Ant)
+			qtree.insert(e);
 	}
 	
 	public int getNumberOfPlayers()
@@ -123,19 +132,26 @@ public class World
 	
 	public void update(int delta)
 	{
-
+		
+		// Find all colliding entities
+		qtree.update();
 		
 		for (Entity e : entities) 
 		{
 			e.update(delta);
 		}
 		
+		qtTestResults = qtree.getItems(qtAreaTest);
+		
 		// Incremental informational updates
 		if(updates % 100 == 0)
 		{
-			System.out.println("Entity count : " + entities.size());
 			
+			System.out.println("qtTestResults Size : " + qtTestResults.size());
+			System.out.println("Entity count : " + entities.size());
 		}
+		
+		
 		
 		updates++;
 	}
@@ -164,6 +180,9 @@ public class World
 		g.setColor(Color.white);
 		g.fillRect(0, 0, size.x, size.y);
 		
+		
+		qtree.draw(g);
+		
 		g.setColor(Color.green);
 		int hw = cr*2;
 		g.drawOval(cx-(hw/2), cy-(hw/2), hw, hw);
@@ -172,6 +191,21 @@ public class World
 		{
 			e.draw(g);
 		}
+		
+		// Draw a faded rect to highlight returned entities form the qt
+		g.setColor(new Color(0, 0, 0, 155));
+		g.fillRect(drawClip.getX(), drawClip.getY(), drawClip.getWidth(), drawClip.getHeight());
+		
+		
+		// Draw the 
+		g.setColor(Color.pink);
+		g.draw(qtAreaTest);
+		
+		for(Entity e : qtTestResults)
+		{
+			e.draw(g);
+		}
+		
 	}
 
 	public void disableRotation() 

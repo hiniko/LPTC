@@ -13,4 +13,15 @@ public class Point
 	{
 		this.x = x; this.y = y;
 	}
+	
+	public int intX()
+	{
+		return (int)x;
+	}
+
+	public int intY()
+	{
+		return (int)y;
+	}
 }
+	

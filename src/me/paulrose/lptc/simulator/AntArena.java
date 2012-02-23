@@ -45,7 +45,7 @@ public class AntArena extends BasicGame{
 		zoom = 1f;
 
 		// Create the world
-		world = new World(123456, 50);
+		world = new World(123456, 10);
 		world.initWorld();
 
 	}
@@ -117,7 +117,7 @@ public class AntArena extends BasicGame{
 		
 		
 		g.setColor(Color.magenta);
-		g.drawString("Ant Simulator", 25, 25);
+		g.drawString("Ant Arena", 10, 25);
 		
 		
 		g.setColor(Color.magenta);

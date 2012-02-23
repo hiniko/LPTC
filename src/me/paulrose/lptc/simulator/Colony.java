@@ -49,9 +49,10 @@ public class Colony extends Entity
 		// List of all ants
 		ants = new LinkedList<Ant>();
 		
-		maxAnts = 10;
-		antCost = 100;
-		food = maxAnts * antCost; //world.random.nextInt(101);
+		maxAnts = 50;
+		antCost = 1000;
+		food = maxAnts * antCost;	 
+		//food = world.random.nextInt(1000 +700);
 
 	}
 	
@@ -66,7 +67,7 @@ public class Colony extends Entity
 			food -= antCost;
 		}
 		
-		//food++;
+		food++;
 		
 
 	}
