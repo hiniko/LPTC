@@ -24,7 +24,7 @@ public class Window extends JFrame {
 	private EditorPanel editor;
 	private CanvasGameContainer canvas;
 	private JMenuBar menuBar;
-	private JPanel controlBar;
+	private JPanel canvasControlBar;
 
 	public Window(){
 		
@@ -45,14 +45,18 @@ public class Window extends JFrame {
 		
 		// Create menu bar
 		createMenuBar();
-		createControlBar();
+		createCanvasControlBar();
+		
+		// Wrapper bar for the canvas and their controls
+		JPanel center = new JPanel();
+		center.setLayout(new BorderLayout());
+		center.add(canvas, BorderLayout.CENTER);
+		center.add(canvasControlBar, BorderLayout.SOUTH);
 		
 		// Set up all window elements, Show time
 		add(menuBar, BorderLayout.NORTH);
 		add(editor, BorderLayout.WEST);
-		add(canvas, BorderLayout.CENTER);
-		add(controlBar, BorderLayout.SOUTH);
-		
+		add(center);
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -64,9 +68,9 @@ public class Window extends JFrame {
 		
 	}
 	
-	private void createControlBar() 
+	private void createCanvasControlBar() 
 	{
-		controlBar = new JPanel();
+		canvasControlBar = new JPanel();
 		
 		JButton start = new JButton("Start");
 		
@@ -111,9 +115,29 @@ public class Window extends JFrame {
 
 		});
 		
-		controlBar.add(start);
-		controlBar.add(pause);
-		controlBar.add(resume);
+		JButton reset = new JButton("Reset");
+		
+		reset.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent arg0)
+			{
+				try
+				{
+					canvas.getContainer().reinit();
+				} catch (SlickException e)
+				{
+					e.printStackTrace();
+					System.out.println("Could not restart the game!");
+				}
+				
+			}
+		});
+		
+		canvasControlBar.add(start);
+		canvasControlBar.add(pause);
+		canvasControlBar.add(resume);
+		canvasControlBar.add(reset);
 	}
 
 

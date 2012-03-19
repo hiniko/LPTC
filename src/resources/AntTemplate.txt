@@ -1,0 +1,24 @@
+import me.paulrose.lptc.simulator.Ant;
+import me.paulrose.lptc.simulator.Colony;
+import me.paulrose.lptc.simulator.Food;
+import me.paulrose.lptc.simulator.World;
+
+public class --NAME--Ant extends Ant
+{
+
+	public --NAME--Ant(String name, float x, float y, Colony c, World w)
+	{
+		super(name, x, y, c, w);
+	}
+
+	public void update(int delta)
+	{
+		super.update(delta);
+		run();
+	}
+
+	public void run()
+	{
+		--USERCODE--
+	}
+}

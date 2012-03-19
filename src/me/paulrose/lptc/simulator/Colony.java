@@ -13,84 +13,158 @@ import org.newdawn.slick.SlickException;
 public class Colony extends Entity
 {
 	
-	private static final int BASE_SIZE = 20;
-	private String name;
-	private String antClass;
-	private LinkedList<Ant> ants;
-	private int diameter, maxAnts, antCost;
-	Color colour;
-	private long food;
-	public Image antSpriteFull, antSpriteMin;
+	private static final int BASE_RADIUS = 20;
+
 	
-	Colony(String n, int x, int y, String c, long f, World wo)
+	private String name, antClass;
+	private LinkedList<Ant> ants;
+	private int diameter, maxAnts, antCost, energy, energyMinimum;
+	private Image antSpriteFull, antSpriteMin;
+	private float centerX, centerY;
+	protected boolean drawEnergyCount, drawAntCount, drawOwnerName;
+
+	
+	Colony(String n, float x, float y, String c, int f, World wo)
 	{
-		super(n, x, y, wo);
+		super(n, x, y, BASE_RADIUS * 2, BASE_RADIUS *2, wo);
+		
+		sizeRadius = BASE_RADIUS;
 		
 		name = n;
 		antClass = c;
-		food = f;
+		energy = f;
 		
 		// The size of the colony 
-		diameter = (int) (BASE_SIZE);
-		size = new Point(diameter, diameter);
 		// The color of the colony and its ants
 		int r = (int)(world.random.nextDouble() * 255);
 		int g = (int)(world.random.nextDouble() * 255);
 		int b = (int)(world.random.nextDouble() * 255);
-		colour = new Color(r,g,b);
+		colour = new Color(r,b,g);
 		
-		// Flag a new buffered image to be created
-		antSpriteFull = world.antFactory.createAntSprite(colour,false);
-		antSpriteMin = world.antFactory.createAntSprite(colour, true);
+		createAntSprites();
 		
 		redrawSprite = false;
-		
+		drawEnergyCount = true;
+		drawAntCount = true;
+		drawOwnerName = true;
 		
 		// List of all ants
 		ants = new LinkedList<Ant>();
 		
-		maxAnts = 50;
-		antCost = 1000;
-		food = maxAnts * antCost;	 
-		//food = world.random.nextInt(1000 +700);
+		maxAnts = 100;
+		antCost = 500;
+		energy = 5000;
+		
+		centerX = bounds.getCenterX();
+		centerY = bounds.getCenterY();
 
+	}
+
+	
+	private void createAntSprites()
+	{
+		antSpriteFull = world.antFactory.createAntSprite(colour,false);
+		antSpriteMin = world.antFactory.createAntSprite(colour, true);
 	}
 	
 	public void update(int delta)
 	{
 		super.update(delta);
 		// update the sprite if needed
-
-		if(ants.size() <= maxAnts && food >= antCost)
+		
+		// Shall we produce another ant?
+		if(ants.size() <= maxAnts 
+			&& (energy - antCost) >= antCost 
+			&& (energy - antCost) > energyMinimum)
 		{
-			ants.add(world.antFactory.createAnt(antClass, (int)pos.x, (int)pos.y, this));
-			food -= antCost;
+			ants.add(world.antFactory.createAnt(antClass, bounds.getCenterX(), 
+					bounds.getCenterY(), this));
+			energy -= antCost;
+			
 		}
 		
-		food++;
+		if(world.getUpdates() % 1000 == 0)
+		{
+			energy -= 100;
+		}
 		
-
+		
+		float sizeW = BASE_RADIUS*2 + energy / 100;
+		float sizeH = BASE_RADIUS*2 + energy / 100;
+		
+		bounds.setWidth(sizeW);
+		bounds.setHeight(sizeH);
+		
+		bounds.setCenterX(centerX);
+		bounds.setCenterY(centerY);
+		
 	}
 	
 	public void draw(Graphics g)
 	{	
-		float x = (float)pos.x;
-		float y = (float)pos.y;
-		float w = (float)size.x;
-		float h = (float)size.y;
+		
+		
+		
+		float x = bounds.getX();
+		float y = bounds.getY();
+		float w = bounds.getWidth();
+		float h = bounds.getHeight();
 		float hw = w /2;
 		float hh = h /2;
 		
+		if(g.getWorldClip().contains(x, y))
+		{
+			g.setColor(colour);
+			g.fillOval(x , y, w, h);
+			
+			if(drawEnergyCount)
+			{
+				String amount = ""+energy;
+				g.setColor(Color.black);
+				g.drawString(amount, bounds.getCenterX() - ((9 * amount.length()) /2 ),
+						bounds.getY() + bounds.getHeight());
+			}
+			
+			if(drawAntCount)
+			{
+				String antsCount = ""+ants.size();
+				g.setColor(Color.black);
+				g.drawString(antsCount, bounds.getCenterX() - ((9 * antsCount.length()) /2 ),
+						bounds.getCenterY()  -6);
+			}
+			
+			if(drawOwnerName)
+			{
+				g.setColor(Color.black);
+				g.drawString(antClass, bounds.getCenterX() - ((9 * antClass.length()) /2 ),
+						bounds.getCenterY() - 35);
+			}
+		}
 		
-		g.setColor(colour);
-		g.fillOval(x - hw, y-hh, w, h);
+		super.draw(g);
 		
+	}
+	
+	public void removeAnt(Ant a)
+	{
+		// Check if the ant is dead first
+		// Malicious players could be abusing this
+		if(a.energy < 0)
+			ants.remove(a);
+			world.removeEntity(a);
 	}
 
 	
 	public Color getColor()
 	{
 		return colour;
+	}
+	
+	public void setColor(int r, int g, int b)
+	{
+		colour = new Color(r,g,b);
+		antSpriteFull = world.antFactory.createAntSprite(colour,false);
+		antSpriteMin = world.antFactory.createAntSprite(colour, true);
 	}
 	
 	public Image getAntSprite()
@@ -102,5 +176,14 @@ public class Colony extends Entity
 		
 	}
 	
+	public void addFood(Food f)
+	{
+		energy += (int)f.getTotalFood();
+		f.delete();
+	}
 	
+	public void setMinimumEnergy(int i)
+	{
+		energyMinimum = i;
+	}
 }

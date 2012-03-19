@@ -45,8 +45,13 @@ public class AntArena extends BasicGame{
 		zoom = 1f;
 
 		// Create the world
-		world = new World(123456, 10);
-		world.initWorld();
+		world = new World();
+		
+		world.setMaxFood(3000);
+		world.setMaxFoodSize(200);
+		
+		world.createPlayerAntTestWorld(0, 4);
+	
 
 	}
 		
@@ -58,6 +63,7 @@ public class AntArena extends BasicGame{
 		if(!container.isPaused())
 		{
 			world.update(delta);
+			//world.update(0);
 		}
 	}
 	
@@ -104,11 +110,7 @@ public class AntArena extends BasicGame{
 			world.enableRotation();
 		
 		world.draw(g);
-		
-		Ant.drawCount = 0;
-		world.draw(g);	
-		
-		
+
 		
 		g.popTransform();
 		g.popTransform();

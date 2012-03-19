@@ -5,6 +5,8 @@ import java.util.LinkedList;
 
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.event.UndoableEditEvent;
+import javax.swing.event.UndoableEditListener;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultStyledDocument;
@@ -13,6 +15,7 @@ import javax.swing.text.Element;
 
 import javax.swing.text.SimpleAttributeSet;
 import javax.swing.text.StyleConstants;
+import javax.swing.undo.UndoManager;
 
 
 public class HighlightedDocument extends DefaultStyledDocument
@@ -21,13 +24,14 @@ public class HighlightedDocument extends DefaultStyledDocument
 	private SimpleAttributeSet defaultStyle;
 	private Editor editor;
 	private int indentLevel;
+
 	
 	public HighlightedDocument(final Editor e)
 	{
 		// init class variables
 		defaultStyle = new SimpleAttributeSet();	
 		// Define the default style
-		StyleConstants.setFontSize(defaultStyle, 14);
+		StyleConstants.setFontSize(defaultStyle, 12);
 		StyleConstants.setFontFamily(defaultStyle, "Monospaced");
 		StyleConstants.setForeground(defaultStyle, Color.BLACK);
 		StyleConstants.setBold(defaultStyle, false);
@@ -38,8 +42,12 @@ public class HighlightedDocument extends DefaultStyledDocument
 		editor = e;	
 		
 		indentLevel = 0;
-		
-		//addDocumentListener(new HighlightedDcoumentListener());
+	}
+	
+	public void rehighlight()
+	{
+		Element e = getRootElements()[0];
+		colourer.style(e.getStartOffset(), e.getEndOffset(), this);
 	}
 	
 	public void insertString(int offs, String str, AttributeSet a)

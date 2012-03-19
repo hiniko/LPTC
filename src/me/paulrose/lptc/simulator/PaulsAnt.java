@@ -1,33 +1,36 @@
 package me.paulrose.lptc.simulator;
 
-public class PaulsAnt extends Ant{
-	
-	PaulsAnt(String name, int x, int y, Colony c, World w)
+public class PaulsAnt extends Ant
+{
+
+	PaulsAnt(String name, float x, float y, Colony c, World w)
 	{
-		super(name, x, y,c, w);
-		
-		setRotation(world.random.nextInt(360 + 1));
+		super(name, x, y, c, w);
 	}
-	
+
 	public void update(int delta)
 	{
 		super.update(delta);
 		run();
 	}
-	
-	public void randomDirection()
-	{
-		// HEad
-		dest.x = world.random.nextDouble() * world.getWidth();
-		dest.y = world.random.nextDouble() * world.getHeight();
-	}
-	
-	
+
 	public void run()
 	{
 		// This is my logic for my ant
-		
+		if ( isNotCarrying() && nearFood() )
+			if (nearestFood.isNotBeingCarried())
+				goTo(nearestFood);
+
+		if (atFood() && isNotCarrying())
+			harvest(nearestFood);
+
+		if (isCarryingFood())
+			goTo(colony);
+
+		if (isCarryingFood() && atColony())
+		{
+			dropOffFood();
+		}
+
 	}
-
-
 }

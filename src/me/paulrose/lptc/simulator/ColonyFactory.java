@@ -5,7 +5,7 @@ public class ColonyFactory extends BaseFactory
 
 	ColonyFactory(World w){ super(w); }
 
-	public Colony create(String n, int x, int y, int f, String atype)
+	public Colony create(String n, float x, float y, int f, String atype)
 	{		
 		Colony c = new Colony(n, x, y, atype, 100, world);
 		world.addEntity(c);

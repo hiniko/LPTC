@@ -1,10 +1,7 @@
 package me.paulrose.lptc.simulator;
 
-import java.awt.Color;
-import java.awt.Graphics2D;
 
 import javax.vecmath.Vector2d;
-
 import org.newdawn.slick.Graphics;
 
 public class MoveableEntity extends Entity
@@ -15,14 +12,16 @@ public class MoveableEntity extends Entity
 	protected boolean atDestination, walkToActive, stopped;
 	
 
-	public MoveableEntity(String name, int x, int y, 
+	public MoveableEntity(String name, float x, float y, int w, int h,
 			World wo)		
 	{
-		super(name, x, y, wo);
+		super(name, x, y, w, h, wo);
 		
 		acel = 0.01;
 		vel = 0;
 		maxVel = 0.1;
+		if(!World.deltaMovement)
+			maxVel = 1;
 		
 		dest = new Vector2d(x,y);
 		
@@ -49,35 +48,45 @@ public class MoveableEntity extends Entity
 	
 		// Check to see if we are still within the world
 		// A check for all four corners
-		if( pos.x > world.getWidth())
+		if( bounds.getCenterX() > world.getWidth())
 		{
-			pos.x = world.getWidth();
+			bounds.setCenterX(world.getWidth());
 			rotation += bounceRotation;
 		}
-		else if (pos.x < 0)
+		else if (bounds.getCenterX() < 0)
 		{
-			pos.x = 0;
+			bounds.setCenterX(0);
 			rotation += bounceRotation;
 		}
 			
-		if( pos.y > world.getHeight())
+		if( bounds.getCenterY() > world.getHeight())
 		{
-			pos.y = world.getHeight();
+			bounds.setCenterY(world.getHeight());
 			rotation += bounceRotation;
 		}
-		else if (pos.y < 0)
+		else if (bounds.getCenterY() < 0)
 		{
-			pos.y = 0;
+			bounds.setCenterY(0);
 			rotation += bounceRotation;
 		}
 		
 		rotation = rotation % (2 * Math.PI);
 		
-		//
-		if(walkToActive)
-			walkToPoint(delta);
-		else
-			walkForwards(delta);
+		if(!stopped)
+		{
+			if(walkToActive)
+				walkToPoint(delta);
+			else
+				walkForwards(delta);
+		}
+		
+		// If we are carrying anything make sure we move it with ourselves
+		if (isCarrying)
+		{
+			carrying.bounds.setCenterX(bounds.getCenterX());
+			carrying.bounds.setCenterY(bounds.getCenterY());
+		}
+		
 	}
 	
 	public void walkForwards(int delta)
@@ -98,48 +107,78 @@ public class MoveableEntity extends Entity
 			vel = maxVel;
 		
 		// Calculate the new position
-		pos.x += (direction.x * vel) * delta;
-		pos.y += (direction.y * vel) * delta;
+		if (World.deltaMovement)
+		{
+			bounds.setCenterX( (float) (bounds.getCenterX() + (direction.x * vel) * delta) );
+			bounds.setCenterY( (float) (bounds.getCenterY() + (direction.y * vel) * delta) );			
+		}
+		else
+		{
+			bounds.setCenterX( (float) (bounds.getCenterX() + (direction.x * vel)) );
+			bounds.setCenterY( (float) (bounds.getCenterY() + (direction.y * vel)) );
+		}
 		
-		
-		
-		
+	}
+	
+	public void stop()
+	{
+		stopped = true;
+	}
+	
+	public void go()
+	{
+		stopped = false;
 	}
 	
 	public void walkToPoint(int delta)
 	{	
-		direction =	new Vector2d(dest.x-pos.x, dest.y-pos.y);
+		direction =	new Vector2d(dest.x-bounds.getCenterX(), dest.y-bounds.getCenterY());
 		rotation =  Math.atan2(direction.y, direction.x);
+		double distance = direction.length();
 		direction.normalize(); 
 		
-		vel += acel;
+		vel += acel * delta;
 		
 		if(vel >= maxVel){
 			vel = maxVel;
 		}
 		
-		int framesLeft = (int) (direction.length() / vel);
+		float framesLeft = (float) (distance / vel);
 		
-		if(framesLeft == 0){
-			pos.x = (int)dest.x;
-			pos.y = (int)dest.y;
+		if(framesLeft < 1){
+			bounds.setCenterX((float) dest.x);
+			bounds.setCenterY((float) dest.y);
 			atDestination = true;
 			vel = 0;
 			walkToActive = false;
 			
 		}else{
-			// Calculate the new position
-			pos.x += direction.x * vel / delta;
-			pos.y += direction.y * vel / delta;
-			atDestination = false;
+ 			// Calculate the new position
+			if(World.deltaMovement){
+				bounds.setCenterX( bounds.getCenterX() + (float) (direction.x * vel * delta ) );
+				bounds.setCenterY( bounds.getCenterY() + (float) (direction.y * vel * delta ) );
+			}
+			else
+			{
+				bounds.setCenterX( bounds.getCenterX() + (float) (direction.x * vel ) );
+				bounds.setCenterY( bounds.getCenterY() + (float) (direction.y * vel ) );
+			}
+			atDestination = false;	
 		}
 		
 	}
 	
-	
-	public void draw(Graphics g2d)
+	public void goTo(Entity e)
 	{
-		super.draw(g2d);
+		walkToActive = true;
+		dest.x = e.bounds.getCenterX();
+		dest.y = e.bounds.getCenterY();
+	}
+	
+	
+	public void draw(Graphics g)
+	{
+		super.draw(g);
 		
 	}
 

@@ -17,6 +17,8 @@ public class QuadTree
 	private Rectangle area;
 	private Node root;
 	private boolean preDivided;
+	private ArrayList<Entity> elements;
+	
 	
 	public QuadTree(Point loc, Dimension size, int maxElements, int maxDepth)
 	{
@@ -37,15 +39,16 @@ public class QuadTree
 	public void preDivide()
 	{
 		if( ! preDivided)
-		root.forceSubdivide();
+			root.forceSubdivide();
 	}
 	
 	public void insert(Entity e)
 	{
-		if(!area.contains((float)e.pos.x, (float)e.pos.y))
+		if(!area.intersects(e.bounds))
 		{
 			throw new IllegalArgumentException(
-					"Point " + e.pos.x + ":" +e.pos.y + "not in quad tree range");
+					"Point " + e.bounds.getX() + ":" +e.bounds.getY() + 
+					"not in quad tree range " + e.toString());
 		}
 		
 		root.insert(e);
@@ -76,6 +79,11 @@ public class QuadTree
 		
 		return items;
 		
+	}
+	
+	public void findCollisions()
+	{
+		root.findCollisions();
 	}
 	
 	private class Node
@@ -120,30 +128,21 @@ public class QuadTree
 			
 			// Check if node is divided and call the node if it is
 			if(nodes.size() != 0)
-			{
-				int quadrant = 0;
-				
-				// Find the segment the point belongs to
-				boolean left = (e.pos.x > (area.getX() + area.getWidth() / 2)) ? false : true;
-				boolean top = (e.pos.y > (area.getY() + area.getHeight() / 2)) ? false : true;
-				
-				if(left && top)
-					quadrant = TOP_LEFT;
-				if(!left && !top)
-					quadrant = BOTTOM_RIGHT;
-				if(left && !top)
-					quadrant = BOTTOM_LEFT;
-				if(!left && top)
-					quadrant = TOP_RIGHT;
-				
-				Node n = nodes.get(quadrant);
-				n.insert(e);
+			{	
+				for(Node n : nodes.values())
+				{
+					if(e.bounds.intersects(n.area))
+					{
+						n.insert(e);
+					}
+				}
 				return;
 			}
 			else
 			{
-				// Add to the element list for this node
-				elements.add(e);
+				// Add to the element list for this node No dupes though
+				if(!elements.contains(e))
+					elements.add(e);
 				
 				// Check to see if this node is full and we are not at the
 			 	// So the tree dosn't get too big
@@ -206,9 +205,17 @@ public class QuadTree
 				for(Iterator<Entity> i = elements.iterator(); i.hasNext();)
 				{
 					Entity e = i.next();
-					if(!area.contains((float)e.pos.x, (float)e.pos.y) && parent != null)
+					
+					// Has the entity left this node completely?
+					if(!e.bounds.intersects(area) && parent != null)
 					{
 						i.remove();
+						reInsert.add(e);
+					}
+					// is the entity still fully within this area?
+					else if (!area.contains(e.bounds) && parent != null)
+					{
+						// it is not, it needs reinserting to be in other nodes
 						reInsert.add(e);
 					}
 				}
@@ -222,7 +229,8 @@ public class QuadTree
 			
 			// Get the number of items that live in this node or the children of this node
 			// and shrink down if there are less nodes then the max Amount.
-			if(getItemCount() <= maxElements)
+			
+			if(getItemCount() <= maxElements && nodes.size() > 0)
 			{
 				// Add all child items to this node
 				
@@ -266,6 +274,47 @@ public class QuadTree
 			}
 		}
 		
+		public void findCollisions()
+		{
+			
+			// Walk through all nodes to find collisions
+			if(nodes.size() == 0)
+			{
+				// Check all elements in this node for collisions
+				for(Entity e : elements)
+				{
+					// check to see if it collides with other elements
+					for(Entity t : elements)
+					{
+						// Don't check against self
+						if (t != e)
+						{
+							float a = e.bounds.getWidth()/2 + 
+									  t.bounds.getWidth()/2;
+							
+							float dx = e.bounds.getCenterX() - t.bounds.getCenterX();
+							float dy = e.bounds.getCenterY() - t.bounds.getCenterY();
+							// Check the radius combined are not longer then 
+							// the distance between two points
+							boolean isCollided = (a*a) > (dx*dx + dy*dy);
+							if(isCollided)
+							{
+								if(!e.viewCollisions.contains(t))
+									e.viewCollisions.add(t);
+							}
+						}
+					}
+				}
+			}
+			else
+			{
+				for (Node n : nodes.values())
+				{
+					n.findCollisions();
+				}
+			}
+		}
+		
 		public void get(Rectangle r, ArrayList<Entity> list)
 		{
 			// Check to see if this node intersects the given area
@@ -278,7 +327,7 @@ public class QuadTree
 					// Return all of the elements that are contained in r
 					for(Entity e : elements)
 					{
-						if(r.contains((float)e.pos.x, (float)e.pos.y))
+						if(r.contains(e.bounds))
 							list.add(e);
 					}
 				}

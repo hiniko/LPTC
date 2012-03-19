@@ -1,6 +1,6 @@
 package me.paulrose.lptc;
 
-public class Main {
+public class AntArenaApplication {
 
 	/**
 	 * @param args
