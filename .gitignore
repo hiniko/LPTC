@@ -32,6 +32,9 @@ local.properties
 #MACK shiz
 .DS_Store
 
-resources/lwjgl/*
 build
 dist
+/src/resources/lwjgl/*
+ants/*.java
+ants/*.class
+ants

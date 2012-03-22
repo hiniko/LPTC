@@ -27,12 +27,14 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
 import javax.swing.JToolBar;
+import javax.swing.ScrollPaneConstants;
 import javax.swing.SpringLayout;
 import javax.swing.border.EtchedBorder;
 import javax.swing.filechooser.FileFilter;
@@ -101,6 +103,8 @@ public class EditorPanel extends JPanel{
 		output.setEditable(false);
 		
 		JScrollPane sp = new JScrollPane(output);
+		sp.setHorizontalScrollBar(new JScrollBar());
+		sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 
 		outputBox.add(outputLabel, BorderLayout.NORTH);
 		outputBox.add(sp, BorderLayout.CENTER);

@@ -37,6 +37,8 @@ public class Window extends JFrame {
 	
 		try {
 			canvas = new CanvasGameContainer(new AntArena());
+			canvas.getContainer().setAlwaysRender(false);
+			
 			
 		} catch (SlickException e) {
 			System.out.println("The Game didn't work for some reason, COMPENSATE!");

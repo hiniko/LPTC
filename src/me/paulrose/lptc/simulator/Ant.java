@@ -8,18 +8,20 @@ import org.newdawn.slick.geom.Rectangle;
 public abstract class Ant extends MoveableEntity
 {
 	
-	protected static boolean firstRun = true;
-	
-
 	public static final int BODY_SIZE = 10;
 	public static final int VIEW_RADIUS = 25;  
 	
-	static final int CARRY_CAPACITY = 20;
-	static final int EAT_SPEED = 50;
+	public static final float WALK_VELOCITY = 0.1f;
+	public static final float RUN_VELOCITY = 0.14f;
+	
+	public static final int CARRY_CAPACITY = 100;
+	public static final int EAT_SPEED = 2;
 	
 	public static final int WALK_COST = 1;
+	public static final int RUN_COST = 3;
 	public static final int CARRY_COST = 3;
-	public static final int ATTACK_COST = 15;
+	public static final int ANT_ATTACK_COST = 15;
+	public static final int COLONY_ATTACK_COST = 10;
 	
 	public static final int ATTACK_DAMAGE = 25;
 	
@@ -31,21 +33,21 @@ public abstract class Ant extends MoveableEntity
 	
 	private int processOnTick;
 	
-	protected Colony colony;
+	protected Colony colony, enemyColony;
+	
 	protected int energy, maxCarryWeight;
-	protected boolean drawViewRadius, drawCollisions, drawEnergyBar;
 	
-	protected boolean foundFood, atFood, atColony, atEnemyAnt, atFriendlyAnt, attacked;
-	protected boolean fullEnergy, halfEnergy, eating;
-	protected Ant nearestAnt, nearestFriendlyAnt, nearestEnemyAnt,  attackerAnt;
-	protected Food nearestFood;
-	protected Food biggestFood;
-	protected float nearestFoodDistance;
-	protected float biggestFoodAmount;
-
+	protected boolean foundFood, atFood, atColony, atEnemyAnt, atFriendlyAnt, 
+		attacked, fullEnergy, halfEnergy, eating, friendlyAntAttacked, 
+		friendlyAntFoundFood, nearEnemyColony, nearHomeColony, drawViewRadius, 
+		drawCollisions, drawEnergyBar, atEnemyColony;
 	
-	private Rectangle energyTotal, energyLeft;
+	protected Ant nearestAnt, nearestFriendlyAnt, nearestEnemyAnt,  attackerAnt, 
+		friendlyAttacked, friendlyWithFood;
+	
+	protected Food nearestFood, biggestFood, lastFoodPile;
 
+	protected float nearestFoodDistance, biggestFoodAmount;
 	
 	public Ant(String n, float x, float y, Colony c, World wo)
 	{
@@ -58,16 +60,17 @@ public abstract class Ant extends MoveableEntity
 		maxCarryWeight = 100;
 		sizeRadius = BODY_SIZE / 2;
 
-		drawViewRadius = true;
+		drawViewRadius = false;
 		drawCollisions = false;
 		drawEnergyBar = true;
 		
-		processOnTick = world.random.nextInt(4)+1;
+		
+		processOnTick = world.random.nextInt(4);
 
 		setRotation(world.random.nextInt(360 + 1));
 	}
 
-	public void run()
+	public void runLogic()
 	{
 		// User code will go here in the end
 	}
@@ -80,9 +83,30 @@ public abstract class Ant extends MoveableEntity
 		if(world.getTickNumber() == processOnTick)
 		{
 	
+			// reset ant details
 			collisions.clear();
+			
+			friendlyAntAttacked = false;
+			friendlyAttacked = null;
+			friendlyAntFoundFood = false;
+			friendlyWithFood = null;
+			
+			nearEnemyColony = false;
+			nearHomeColony = false;
+			
+			nearestAnt = null;
+			nearestFriendlyAnt = null;
+			nearestEnemyAnt = null;
+			
+			atEnemyColony = false;
+			atFriendlyAnt = false;
+			atEnemyAnt = false;
+			atEnemyColony = false;
 			atColony = false;
 			atFood = false;
+			
+			enemyColony = null;
+			
 			
 			// Check if we have full energy before this loops deductions
 			fullEnergy = (energy == MAX_ENERGY) ? true : false;
@@ -91,6 +115,7 @@ public abstract class Ant extends MoveableEntity
 			// Find the nearest food to us
 			nearestFoodDistance = Ant.VIEW_RADIUS;
 			float nearestAntDistance = Ant.VIEW_RADIUS;
+			float nearestColonyDistance = Ant.VIEW_RADIUS;
 	
 			for (Entity e : viewCollisions)
 			{
@@ -131,6 +156,58 @@ public abstract class Ant extends MoveableEntity
 							nearestEnemyAnt = a;
 					}
 					
+					// is it a friendly ant?
+					if(a.colony == colony)
+					{
+						// is it under attack?
+						if (a.attacked)
+						{
+							friendlyAntAttacked = true;
+							friendlyAttacked = a;
+						}
+						
+						if(a.foundFood)
+						{
+							friendlyAntFoundFood = true;
+							friendlyWithFood = a;
+						}
+						
+					}
+					
+					// is there a colony about?
+					if(e instanceof Colony)
+					{
+						//is it our colony?
+						Colony c = (Colony) e;
+						nearestColonyDistance = distanceTo(e);
+						
+						if(c == colony)
+							nearHomeColony = true;
+						else
+						{
+							nearEnemyColony = true;
+							enemyColony = c;
+						}
+						
+					}
+					
+				}
+				
+				// Check to see if any objets were near us
+				// reset refereces if there were none
+				if (nearestFoodDistance >= Ant.VIEW_RADIUS)
+				{
+					nearestFood = null;
+					atFood = false;
+				}
+
+				if(nearestAntDistance >= Ant.VIEW_RADIUS)
+				{
+					nearestAnt = null;
+					nearestFriendlyAnt = null;
+					nearestEnemyAnt = null;
+					atFriendlyAnt = false;
+					atEnemyAnt = false;
 				}
 				
 				// Second make finer detections to see if we are touching
@@ -152,8 +229,15 @@ public abstract class Ant extends MoveableEntity
 				if (e instanceof Food && !e.isBeingCarried())
 					atFood = true;
 	
-				if (e instanceof Colony && e == colony)
-					atColony = true;
+				if (e instanceof Colony)
+					if ((Colony) e == colony)
+						atColony = true;
+					else
+					{
+						atEnemyColony = true;
+						enemyColony  = (Colony) e;
+					}
+				
 				if (e instanceof Ant)
 				{
 					if(((Ant) e).colony == colony)
@@ -171,45 +255,48 @@ public abstract class Ant extends MoveableEntity
 				atFood = false;
 			}
 			
-			if(nearestAntDistance == Ant.VIEW_RADIUS)
-			{
-				nearestAnt = null;
-				nearestFriendlyAnt = null;
-				nearestEnemyAnt = null;
-				atFriendlyAnt = false;
-				atEnemyAnt = false;
-			}
-
 			// Run user code here
-			run();
+			runLogic();
 			
-			if(firstRun)
-				firstRun = false;
+			if(colony.isFirstRun())
+				 colony.firstRun();
 		}
 		
 		// Update all other important things
 		// Deduct energy for various continuous states
+		if(lastFoodPile == null || !lastFoodPile.exists())
+			lastFoodPile = null;
+		
 		if(!stopped)
 			energy -= WALK_COST;
 		
 		if(isCarrying)
 			energy -= CARRY_COST;
 		
-		
 		//Check energy reserves and kill this ant if need be
 		if(energy < 0)
 		{
-			die();
+			die(this);
 		}
 	}
 	
-	
-	private void die()
+	public boolean remembersLastFoodPile()
 	{
-		//Remove the and from the colony, the colony will remove it from the world
-		colony.removeAnt(this);
-		// drop whatever we are holding
-		drop();
+		return (lastFoodPile != null) ? true : false;
+	}
+	
+	public void die(Entity e)
+	{
+		if((e instanceof Colony && (Colony)e == colony)
+		|| (e instanceof Ant && (Ant)e == this))
+		{
+			
+			//Remove the and from the colony, the colony will remove it from the world
+			colony.removeAnt(this);
+			// drop whatever we are holding
+			drop();
+		}
+		
 	}
 
 	public void draw(Graphics g)
@@ -273,10 +360,7 @@ public abstract class Ant extends MoveableEntity
 				g.setColor(ENERGY_LEFT_COLOR);
 				g.fillRect(bounds.getCenterX()-VIEW_RADIUS/2, bounds.getCenterY()+10, 
 						 energyBarPercent, 2);
-
-				
 			}
-			
 			
 			if(attacked)
 			{
@@ -307,6 +391,7 @@ public abstract class Ant extends MoveableEntity
 			carrying = f.harvest(CARRY_CAPACITY);
 			isCarrying = true;
 			carrying.setBeingCarried(true);
+			lastFoodPile = f;
 		}
 
 	}
@@ -400,13 +485,23 @@ public abstract class Ant extends MoveableEntity
 		}
 	}
 
-	public void attack(Ant a)
+	public void attackAnt(Ant a)
 	{
 		if(a != null)
 		{
 			a.takeDamage();
-			energy -= ATTACK_COST;
+			energy -= ANT_ATTACK_COST;
 		}
+	}
+	
+	public void attackColony()
+	{
+		if(enemyColony != null)
+		{
+			enemyColony.takeDamage();
+			energy -= COLONY_ATTACK_COST;
+		}
+		
 	}
 	
 	public void takeDamage()
@@ -442,16 +537,64 @@ public abstract class Ant extends MoveableEntity
 	
 	public void walk()
 	{
+		setMaxVelocity(WALK_VELOCITY);
+		stopped = false;
+	}
+	
+	public void run()
+	{
+		setMaxVelocity(RUN_VELOCITY);
 		stopped = false;
 	}
 	
 	public void eatFood(Food f)
 	{
-		eating = true;
-		Food piece = f.harvest(EAT_SPEED);
-		energy += piece.getTotalFood();
-		piece.delete();
+		energy += f.eat(f.getTotalFood());
+		f.setBeingCarried(false);
 		carrying = null;
 		isCarrying = false;
 	}
+	
+	
+	public void eatCarriedFood()
+	{
+		if(isCarrying && carrying instanceof Food)
+		{
+			Food f = (Food) carrying;
+			energy += f.eat(f.getTotalFood());
+			f.setBeingCarried(false);
+			carrying = null;
+			isCarrying = false;
+		}
+	}
+	
+	public void eatAtColony()
+	{
+		if(atColony())
+		{
+			eating = true;
+			energy += colony.feed(EAT_SPEED);
+		}
+	}
+	
+	public Food lastFoodPile()
+	{
+		return lastFoodPile;
+	}
+	
+	public boolean atEnemyColony()
+	{
+		return (atEnemyColony) ? true : false;
+	}
+	
+	public boolean nearEnemyColony()
+	{
+		return nearEnemyColony;
+	}
+	
+	public void resetColonyAttackFlag()
+	{
+		colony.resetAttack(this);
+	}
+
 }

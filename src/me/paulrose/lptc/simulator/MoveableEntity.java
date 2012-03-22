@@ -75,9 +75,23 @@ public class MoveableEntity extends Entity
 		if(!stopped)
 		{
 			if(walkToActive)
-				walkToPoint(delta);
+			{
+				if(target.exists())
+				{
+					dest.x = target.bounds.getCenterX();
+					dest.y = target.bounds.getCenterY();
+				}else
+				{
+					walkToActive = false;
+					target = null;
+				}
+
+				walkToTarget(delta);
+			}
 			else
+			{
 				walkForwards(delta);
+			}
 		}
 		
 		// If we are carrying anything make sure we move it with ourselves
@@ -130,40 +144,51 @@ public class MoveableEntity extends Entity
 		stopped = false;
 	}
 	
-	public void walkToPoint(int delta)
+	public void walkToTarget(int delta)
 	{	
-		direction =	new Vector2d(dest.x-bounds.getCenterX(), dest.y-bounds.getCenterY());
-		rotation =  Math.atan2(direction.y, direction.x);
-		double distance = direction.length();
-		direction.normalize(); 
-		
-		vel += acel * delta;
-		
-		if(vel >= maxVel){
-			vel = maxVel;
-		}
-		
-		float framesLeft = (float) (distance / vel);
-		
-		if(framesLeft < 1){
-			bounds.setCenterX((float) dest.x);
-			bounds.setCenterY((float) dest.y);
-			atDestination = true;
-			vel = 0;
+		if(target != null)
+		{
+			direction =	new Vector2d(dest.x-bounds.getCenterX(), dest.y-bounds.getCenterY());
+			rotation =  Math.atan2(direction.y, direction.x);
+			double distance = direction.length();
+			direction.normalize(); 
+			
+			vel += acel * delta;
+			
+			if(vel >= maxVel){
+				vel = maxVel;
+			}
+			
+			float framesLeft = (float) (distance / vel);
+			
+			float a = sizeRadius + target.sizeRadius;
+			float dx = bounds.getCenterX() - target.bounds.getCenterX();
+			float dy = bounds.getCenterY() - target.bounds.getCenterY();
+			boolean isCollided = (a * a) > (dx * dx + dy * dy);
+	
+			if(isCollided){
+			
+				atDestination = true;
+				vel = 0;
+				walkToActive = false;
+				
+			}else{
+	 			// Calculate the new position
+				if(World.deltaMovement){
+					bounds.setCenterX( bounds.getCenterX() + (float) (direction.x * vel * delta ) );
+					bounds.setCenterY( bounds.getCenterY() + (float) (direction.y * vel * delta ) );
+				}
+				else
+				{
+					bounds.setCenterX( bounds.getCenterX() + (float) (direction.x * vel ) );
+					bounds.setCenterY( bounds.getCenterY() + (float) (direction.y * vel ) );
+				}
+				atDestination = false;	
+			}
+		}else
+		{
 			walkToActive = false;
 			
-		}else{
- 			// Calculate the new position
-			if(World.deltaMovement){
-				bounds.setCenterX( bounds.getCenterX() + (float) (direction.x * vel * delta ) );
-				bounds.setCenterY( bounds.getCenterY() + (float) (direction.y * vel * delta ) );
-			}
-			else
-			{
-				bounds.setCenterX( bounds.getCenterX() + (float) (direction.x * vel ) );
-				bounds.setCenterY( bounds.getCenterY() + (float) (direction.y * vel ) );
-			}
-			atDestination = false;	
 		}
 		
 	}
@@ -171,15 +196,18 @@ public class MoveableEntity extends Entity
 	public void goTo(Entity e)
 	{
 		walkToActive = true;
-		dest.x = e.bounds.getCenterX();
-		dest.y = e.bounds.getCenterY();
+		target = e;
 	}
 	
 	
 	public void draw(Graphics g)
 	{
 		super.draw(g);
-		
+	}
+	
+	public void setMaxVelocity(float f)
+	{
+		maxVel = f;
 	}
 
 }

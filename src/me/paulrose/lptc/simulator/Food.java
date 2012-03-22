@@ -9,7 +9,7 @@ public class Food extends Entity
 	
 	private String type;
 	private int amount, density;
-	private float carrySize;
+	private float carrySize, centerX, centerY;
 	private boolean drawType;
 	private Color droppedColor;
 	
@@ -26,8 +26,9 @@ public class Food extends Entity
 		this.droppedColor = droppedColor;
 		
 		this.carrySize = 3;
+		exists = true;
 		
-		float size = amount / (density /2);
+		float size = amount / 50;
 		
 		// Set minimum size
 		if (size < 5)
@@ -36,12 +37,14 @@ public class Food extends Entity
 		bounds.setWidth(size);
 		bounds.setHeight(size);
 		
-		// Check to see if we are new out of bounds with the world
-		if(bounds.getMaxX() > world.getWidth())
-			bounds.setX(bounds.getX() - bounds.getWidth());
+		//Remember the center X and Y
+		centerX = bounds.getX();
+		centerY = bounds.getY();
 		
-		if(bounds.getMaxY() > world.getHeight())
-			bounds.setY(bounds.getY() - bounds.getHeight());
+		bounds.setCenterX(centerX);
+		bounds.setCenterY(centerY);
+		
+
 	}
 	
 	public Food harvest(int a)
@@ -50,17 +53,20 @@ public class Food extends Entity
 		if(a > amount)
 			a = amount;
 
-		float shrinkageX = (bounds.getWidth() / a)  ;
-		float shrinkageY = (bounds.getHeight() / a) ;
+		float shrinkageX = (bounds.getWidth() / 1000)  * a;
+		float shrinkageY = (bounds.getHeight() / 1000) * a ;
 		
 		bounds.setWidth(bounds.getWidth() - shrinkageX);
 		bounds.setHeight(bounds.getHeight() - shrinkageY);
+		
+		bounds.setCenterX(centerX);
+		bounds.setCenterY(centerY);
 
 		update();
 
 		if(amount > a)
 		{
-			changeAmount(-a);
+			amount -= a;
 			return world.foodFactory.harvest(this, a);
 		}
 		else
@@ -85,12 +91,7 @@ public class Food extends Entity
 	{
 		return amount;
 	}
-
-	public void changeAmount(int change)
-	{
-		amount += change;
-	}
-
+	
 	public int getDensity()
 	{
 		return density;
@@ -139,5 +140,34 @@ public class Food extends Entity
 	{
 		return droppedColor;
 	}
+	
+	public int eat(int a)
+	{
+		if(amount > a)
+		{
+			// there is more food then the ant can eat
+			float shrinkageX = (bounds.getWidth() / 100)  * a;
+			float shrinkageY = (bounds.getHeight() / 100) * a ;
+			
+			bounds.setWidth(bounds.getWidth() - shrinkageX);
+			bounds.setHeight(bounds.getHeight() - shrinkageY);
+			
+			amount -= a;
+			return a * density;
+			
+		}else
+		{
+			float shrinkageX = (bounds.getWidth() / 100)  * a;
+			float shrinkageY = (bounds.getHeight() / 100) * a ;
+			
+			bounds.setWidth(bounds.getWidth() - shrinkageX);
+			bounds.setHeight(bounds.getHeight() - shrinkageY);
+			
+			delete();
+			return amount * density;
+		}
+	}
+	
+	
 
 }

@@ -99,9 +99,8 @@ public class World
 			placement_angle = 360 / players;
 		
 		
-		// Get the list of loaded ants and shuffle them
+		// Get the list of loaded
 		LinkedList<String> antNames = new LinkedList<String>(antFactory.getRegisteredAntNames());
-		Collections.shuffle(antNames);
 		
 		for (int i = 0; i < players; i++)
 		{
@@ -122,7 +121,6 @@ public class World
 	private void defaultSettings()
 	{
 		drawColonyCircle = true;
-		maxFoodSize = 1000;
 	}
 	
 	private void createFood()
@@ -130,8 +128,14 @@ public class World
 		// Place food about
 		while (currentTotalFood < maxFood)
 		{
-			foodFactory.create("Sugar", maxFoodSize, random.nextInt(size.x - 200) + 100,
-					random.nextInt(size.y - 200) + 100);
+			int minX = (int) ((size.x - cr * 2) / 2);
+			int minY = (int) ((size.y - cr * 2) / 2);
+			
+			int maxX = size.x - minX;
+			int maxY = size.y - minY;
+			
+			foodFactory.create("Sugar", maxFoodSize, random.nextInt(maxX - minX +1) + minX ,
+					random.nextInt(maxY - minY +1) + minY );
 			
 			currentTotalFood += maxFoodSize;
 
@@ -177,12 +181,20 @@ public class World
 
 		// Set up random generator
 		if (seed == 0)
-			this.seed = random.nextLong();
+		{
+			long s = random.nextLong();
+			random.setSeed(s);
+			this.seed = s;
+		}
 		else
+		{
+			random.setSeed(seed);
 			this.seed = seed;
-
+		}
+		
+	
 		System.out.println("Seed is " +seed);
-		random.setSeed(seed);
+		
 	}
 	
 	
@@ -322,7 +334,8 @@ public class World
 
 		for (Entity e : entities)
 		{
-			e.draw(g);
+			if( e.exists() )
+				e.draw(g);
 		}
 	}
 

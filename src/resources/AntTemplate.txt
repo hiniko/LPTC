@@ -14,10 +14,10 @@ public class --NAME--Ant extends Ant
 	public void update(int delta)
 	{
 		super.update(delta);
-		run();
 	}
 
-	public void run()
+	@Override
+	public void runLogic()
 	{
 		--USERCODE--
 	}

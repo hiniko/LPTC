@@ -18,12 +18,13 @@ public abstract class Entity
 	protected Rectangle bounds, bodyBounds;
 	protected World world;
 	protected Image sprite;
-	protected boolean redrawSprite, drawID, drawBounds;
+	protected boolean redrawSprite, drawID, drawBounds, exists;
 	protected boolean isBeingCarried, isCarrying, dropped;
 	protected Entity carrying;
 	protected ArrayList<Entity> viewCollisions, collisions;
 	protected int sizeRadius;
 	protected Color colour;
+	protected Entity target;
 	
 	public Entity(String n, float x, float y, int w, int h, World wo)
 	{
@@ -41,6 +42,7 @@ public abstract class Entity
 		drawID = false;
 		drawBounds = false ;
 		isBeingCarried  = false;
+		exists = true;
 		
 	}
 	
@@ -121,5 +123,12 @@ public abstract class Entity
 	public void delete()
 	{
 		world.deleteEntity(this);
+		exists = false;
 	}
+	
+	public boolean exists()
+	{
+		return (exists) ? true : false;
+	}
+	
 }
