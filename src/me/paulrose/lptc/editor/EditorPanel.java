@@ -17,7 +17,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.io.StringReader;
+import java.io.StringWriter;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
@@ -41,6 +46,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.Document;
 
+import org.eclipse.jdt.core.compiler.CompilationProgress;
+import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
+
 
 public class EditorPanel extends JPanel{
 	
@@ -56,7 +64,6 @@ public class EditorPanel extends JPanel{
 	private Editor editor;
 	private final JFileChooser fileChooser;
 	private final FileNameExtensionFilter fileFilter;
-	private Compiler compiler;
 	private String compilerFile, antFile;
 	
 	
@@ -65,7 +72,7 @@ public class EditorPanel extends JPanel{
 	public EditorPanel(){
 		
 		// Set Panel Properties
-		setPreferredSize(new Dimension(360, 720));
+		setPreferredSize(new Dimension(420, 720));
 		setBorder(BorderFactory.createEmptyBorder());
 		setLayout(new BorderLayout());
 		
@@ -103,17 +110,12 @@ public class EditorPanel extends JPanel{
 		output.setEditable(false);
 		
 		JScrollPane sp = new JScrollPane(output);
-		sp.setHorizontalScrollBar(new JScrollBar());
-		sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		sp.setHorizontalScrollBar(new JScrollBar(JScrollBar.HORIZONTAL));
+		sp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
 		outputBox.add(outputLabel, BorderLayout.NORTH);
 		outputBox.add(sp, BorderLayout.CENTER);
 		
-		
-		
-		// Instantiate the compiler
-		compiler = new Compiler(output);
-		compiler.setCompileOptions(new String[]{"-d", System.getProperty("user.dir") + "/ants/"});
 		
 		// Load the template into memory exit if we cannot find it
 		try
@@ -169,11 +171,12 @@ public class EditorPanel extends JPanel{
 	
 	public void newDocument(){
 		
-		JScrollPane scroller = new JScrollPane(editor,
-                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,
-                JScrollPane.HORIZONTAL_SCROLLBAR_NEVER );
+		JPanel editorWrapper = new JPanel(new BorderLayout());
+		editorWrapper.add(editor);
+		JScrollPane scroller = new JScrollPane(editorWrapper,
+                JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+                JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS );
 		scroller.setName("Untitled Agent " + editorCount);
-		
 		tabs.add(scroller);
 		editorCount++;
 	}
@@ -299,7 +302,7 @@ public class EditorPanel extends JPanel{
 
 					if(fileLocationKnown)
 					{
-						compiler.compileFile(compilerFile);		
+						compile(compilerFile);		
 					}
 					
 				}
@@ -423,5 +426,53 @@ public class EditorPanel extends JPanel{
 	protected static ImageIcon createImageIcon(String path) {
 	    java.net.URL imgURL = EditorPanel.class.getResource(path);
 	    return new ImageIcon(imgURL);
+	}
+	
+	
+	private void compile(String file)
+	{
+		StringWriter sw = new StringWriter();
+		PrintWriter pw = new PrintWriter(sw);
+		
+		CompilationProgress progress = null; // instantiate your subclass
+		
+		StringBuilder sb = new StringBuilder();
+		
+		// Options for the compiler
+		sb.append("-classpath " + System.getProperty("user.dir") + "/LPTC_Full.jar");
+		sb.append(" ");
+		sb.append("-1.6");
+		sb.append(" ");
+		sb.append("-warn:none");
+		sb.append(" ");
+		sb.append(" -d " + System.getProperty("user.dir") + "/ants/");
+		sb.append(" ");
+		sb.append(file);
+		
+		output.append("Compile Arguments \n");
+		output.append(sb.toString());
+		output.append("\n\n");
+		
+		boolean result = BatchCompiler.compile(
+			sb.toString(),
+			pw,
+			pw,
+			progress
+		);
+		
+		DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+		Date date = new Date();
+		
+		if(result)
+		{
+			output.append("[ "+ dateFormat.format(date) + " ] \n");
+			output.append("Your Code Compiled Successfully");
+		}
+		else
+			output.append("[ "+ dateFormat.format(date) + " ] \n" + sw.toString() + "\n\n");
+		
+		output.append("\n\n\n\n");
+		
+		
 	}
 }

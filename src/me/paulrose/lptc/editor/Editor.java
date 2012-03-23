@@ -28,6 +28,7 @@ public class Editor extends JTextPane {
 		setAutoscrolls(true);
 		setMargin(new Insets(10, 10, 10, 10));
 		
+		
 		undo = new CompoundUndoManager(this);
 		fileLocation = null;
 	}

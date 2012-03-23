@@ -34,7 +34,6 @@ local.properties
 
 build
 dist
-/src/resources/lwjgl/*
-ants/*.java
-ants/*.class
-ants
+src/resources/lwjgl/*
+LPTC_Full.jar
+ants/*
