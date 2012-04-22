@@ -35,6 +35,11 @@ public class MoveableEntity extends Entity
 		rotation = Math.toRadians(rot) - Math.toRadians(90);
 	}
 	
+	public double getRotation()
+	{
+		return rotation;
+	}
+	
 	
 	public void update(int delta)
 	{

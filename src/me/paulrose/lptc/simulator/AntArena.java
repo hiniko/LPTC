@@ -46,8 +46,7 @@ public class AntArena extends BasicGame{
 
 		// Create the world
 		world = new World();
-		
-		world.setMaxFood(20000);
+	
 		world.setMaxFoodSize(2000);
 		
 		world.createPlayerAntTestWorld(0, 4);

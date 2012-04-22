@@ -47,8 +47,12 @@ public class World
 		createRandomGenerator(seed);
 		createFactoriesAndLists();
 		
+		
+		
 		// Work out player count
 		players = antFactory.getRegisteredAntNames().size();
+		
+		maxFood = 10000 * players;
 		
 		// Size the world
 		sizeWorld();
@@ -66,23 +70,25 @@ public class World
 		if(totalPlayers < 2)
 			totalPlayers = 2;
 		
+		
+		
 		// Create core elements of world
 		createRandomGenerator(seed);
 		createFactoriesAndLists();
 		
 		// Set player count
 		players = antFactory.getRegisteredAntNames().size();
-		
+		maxFood = 10000 * players;
 		// Size the world
 		sizeWorld();
 		
 		// Work out how many ants we need to load for this run
 		int antsToLoad = totalPlayers - 1;
 		this.testRun = true;
+	
+		createFood();
 		
 		createColonies();
-		
-		createFood();
 		
 		defaultSettings();
 		

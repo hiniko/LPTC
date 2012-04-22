@@ -108,6 +108,7 @@ public class EditorPanel extends JPanel{
 		output.setBorder(BorderFactory.createEtchedBorder(EtchedBorder.LOWERED));
 		output.setWrapStyleWord(false);
 		output.setEditable(false);
+		output.setAutoscrolls(true);
 		
 		JScrollPane sp = new JScrollPane(output);
 		sp.setHorizontalScrollBar(new JScrollBar(JScrollBar.HORIZONTAL));
@@ -439,15 +440,15 @@ public class EditorPanel extends JPanel{
 		StringBuilder sb = new StringBuilder();
 		
 		// Options for the compiler
-		sb.append("-classpath " + System.getProperty("user.dir") + "/LPTC_Full.jar");
+		sb.append("-classpath \"" + System.getProperty("user.dir") + "/LPTC_Full.jar\"");
 		sb.append(" ");
 		sb.append("-1.6");
 		sb.append(" ");
 		sb.append("-warn:none");
 		sb.append(" ");
-		sb.append(" -d " + System.getProperty("user.dir") + "/ants/");
+		sb.append(" -d \"" + System.getProperty("user.dir") + "/ants/\"");
 		sb.append(" ");
-		sb.append(file);
+		sb.append("\"" + file + "\"");
 		
 		output.append("Compile Arguments \n");
 		output.append(sb.toString());

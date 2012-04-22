@@ -80,7 +80,8 @@ public abstract class Ant extends MoveableEntity
 	{
 		super.update(delta);
 		
-		if(world.getTickNumber() == processOnTick)
+		if(world.getTickNumber() == processOnTick
+		|| colony.isFirstRun())
 		{
 	
 			// reset ant details
@@ -109,8 +110,8 @@ public abstract class Ant extends MoveableEntity
 			
 			
 			// Check if we have full energy before this loops deductions
-			fullEnergy = (energy == MAX_ENERGY) ? true : false;
-			halfEnergy = (energy >= MAX_ENERGY / 2) ? true : false;
+			fullEnergy = (energy == MAX_ENERGY);
+			halfEnergy = (energy >= MAX_ENERGY / 2);
 	
 			// Find the nearest food to us
 			nearestFoodDistance = Ant.VIEW_RADIUS;
@@ -280,9 +281,14 @@ public abstract class Ant extends MoveableEntity
 		}
 	}
 	
+	public Food lastFoodPile()
+	{
+		return lastFoodPile;
+	}
+	
 	public boolean remembersLastFoodPile()
 	{
-		return (lastFoodPile != null) ? true : false;
+		return (lastFoodPile != null);
 	}
 	
 	public void die(Entity e)
@@ -395,6 +401,18 @@ public abstract class Ant extends MoveableEntity
 		}
 
 	}
+	
+	public void harvestFood()
+	{
+		if (!isCarrying && atFood && nearestFood != null)
+		{
+			carrying = nearestFood.harvest(CARRY_CAPACITY);
+			isCarrying = true;
+			carrying.setBeingCarried(true);
+			lastFoodPile = nearestFood;
+		}
+		
+	}
 
 	public void print(String msg)
 	{
@@ -403,12 +421,12 @@ public abstract class Ant extends MoveableEntity
 
 	public boolean isCarrying()
 	{
-		return (isCarrying) ? true : false;
+		return (isCarrying);
 	}
 
 	public boolean isNotCarrying()
 	{
-		return (!isCarrying) ? true : false;
+		return (!isCarrying);
 	}
 
 	public boolean isCarryingFood()
@@ -421,49 +439,49 @@ public abstract class Ant extends MoveableEntity
 
 	public boolean isCarryingAnt()
 	{
-		return (isCarrying && carrying instanceof Ant) ? true : false;
+		return (isCarrying && carrying instanceof Ant);
 
 	}
 
 	public boolean nearFood()
 	{
-		return (nearestFood != null) ? true : false;
+		return (nearestFood != null);
 	}
 	
 	public boolean nearAnt()
 	{
-		return (nearestAnt != null) ? true : false;
+		return (nearestAnt != null);
 	}
 	
 	public boolean nearFriendlyAnt()
 	{
-		return (nearestFriendlyAnt != null) ? true : false;
+		return (nearestFriendlyAnt != null);
 	}
 	
 	public boolean nearEnemyAnt()
 	{
-		return (nearestEnemyAnt != null) ? true : false;
+		return (nearestEnemyAnt != null);
 	}
 	
 	public boolean atFood()
 	{
-		return (atFood) ? true : false;
+		return (atFood);
 	}
 	
 	public boolean atFriendlyAnt()
 	{
-		return (atFriendlyAnt) ? true : false;
+		return (atFriendlyAnt);
 	}
 	
 	public boolean atEnemyAnt()
 	{
-		return (atEnemyAnt) ? true : false;
+		return (atEnemyAnt);
 	}
 	
 	
 	public boolean atColony()
 	{
-		return (atColony) ? true : false;
+		return (atColony);
 	}
 	
 	public void drop()
@@ -512,7 +530,7 @@ public abstract class Ant extends MoveableEntity
 	
 	public boolean beingAttacked()
 	{
-		return (attacked) ? true : false;
+		return (attacked);
 	}	
 	
 	public void resetAttack()
@@ -522,7 +540,7 @@ public abstract class Ant extends MoveableEntity
 	
 	public boolean isEating()
 	{
-		return (eating) ? true : false;
+		return (eating);
 	}
 	
 	public void stopEating()
@@ -577,14 +595,9 @@ public abstract class Ant extends MoveableEntity
 		}
 	}
 	
-	public Food lastFoodPile()
-	{
-		return lastFoodPile;
-	}
-	
 	public boolean atEnemyColony()
 	{
-		return (atEnemyColony) ? true : false;
+		return (atEnemyColony);
 	}
 	
 	public boolean nearEnemyColony()

@@ -16,7 +16,9 @@ public class Colony extends Entity
 	public static final int MAX_HEALTH = 10000;
 	public static final int ENERGY_TO_HEALTH_RATIO = 1;
 	public static final int HEALTH_INCREASE = 10;
-	public static final int COLONY_DAMAGE = 10;
+	
+	public static final int COLONY_DAMAGE = 25;
+	
 	public static final int MAX_ANTS = 100;
 	public static final int ANT_COST = 2000;
 	public static final int ANT_ENERGY = 5000;
@@ -89,19 +91,14 @@ public class Colony extends Entity
 	public void update(int delta)
 	{
 		super.update(delta);
+		attacked = false;
 
 		if (ants.size() > 0 && health > 0)
 		{
 			// Shall we produce another ant?
-
-			if (autoCreateAnts && ants.size() <= maxAnts
-					&& ants.size() <= antLimit && (energy - antCost) >= antCost
-					&& (energy - antCost) > energyMinimum)
-			{
-				ants.add(world.antFactory.createAnt(antClass,
-						bounds.getCenterX(), bounds.getCenterY(), this));
-				energy -= antCost;
-			}
+			
+			if(autoCreateAnts)
+				createAnt();
 
 			if (world.getUpdates() % 16 == 0)
 			{
@@ -221,8 +218,7 @@ public class Colony extends Entity
 	{
 		// Check if the ant is dead first
 		// Malicious players could be abusing this
-		if (a.energy < 0)
-			ants.remove(a);
+		ants.remove(a);
 		world.removeEntity(a);
 	}
 
@@ -285,7 +281,11 @@ public class Colony extends Entity
 	{
 		return energy;
 	}
-
+	
+	public boolean isUnderAttack()
+	{
+		return attacked;
+	}
 	public boolean isAutoCreateAntsOn()
 	{
 		return autoCreateAnts;
@@ -345,6 +345,7 @@ public class Colony extends Entity
 		}
 	}
 
+	//TODO checking of energy bounds and disable users from being to edit the values of sensitive variables.
 	public void resetAttack(Entity e)
 	{
 		if (e instanceof Ant && ((Ant) e).colony == this)
