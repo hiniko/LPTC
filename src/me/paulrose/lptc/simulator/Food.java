@@ -44,9 +44,6 @@ public class Food extends Entity
 		bounds.setCenterX(centerX);
 		bounds.setCenterY(centerY);
 		
-		drawBounds = true;
-		
-
 	}
 	
 	public Food harvest(int a)

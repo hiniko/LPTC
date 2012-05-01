@@ -1,0 +1,35 @@
+# Learning Programming Through Competition - The Ant Arena
+
+## About 
+
+This project is a result of a university final year project, aimed an creating an application that can be used to introduce users to java programming in an interesting and competative way.
+
+Users write code for a single ant that will make up members of their colony. 
+Each colony must collect food an fend of attckers in a bit to be the last one alive. When users have produced ants they are happy with, their code is run together to see whose ant code is superior.
+
+This project is written in Java and is cross-platform.
+
+## Usage
+
+A precompiled .jar can be found on my site. On most systems double clicking with run the jar. For those that won't run `java -jar LPTC_Full.jar` from a command prompt or terminal.
+
+For acutal usage, check the documentation .pdf for a quick getting started.
+
+
+## Compilation
+
+To compile you will need the following libries: (They are all in /lib at the moment but this may/will change)
+
+lwjgl.jar - From the LWJGL project, For rendering
+org.eclipse.jdt.core_3.7.1.v_B76_R37x.jar - Form the JDT Core project, for code compilation
+slick.jar - For the game rending in OpenGL using LWJGL
+snakeyaml-1.9.jar - For Parsing of .yml option files
+vecmath.jar - For use of Vector math classes ( Apparently not present by default in java but is on the OSX installation )
+
+An ant script will appear at some point. Until then making a new Eclispe project with this folder as this existing source does the trick. Add the jars to the classpath. (Right Click > Build Path > Add to build path). Create a Run Configuration using me.paulrose.ltpc.AntAreanaApplication as the entry point.
+
+When running lwjgl needs the location of the natives, specified by -Djava.library.path=/path/to/natices. If using Eclipse run configuations don't forget to add this as a VM configuration.
+
+## Contact
+
+Please leave any issues on the project and wiki as and when you find them and fork this to make it better!
