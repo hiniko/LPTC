@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="LPTC" default ="dist" basedir=".">
+
+	<property name="src" location="src"/>
+	<property name="build" location="build"/>
+	<property name="dist" location="dist"/>
+	<property name="lib.dir" location="lib"/>
+
+	<path id="classpath">
+		<fileset dir="${lib.dir}" includes="**/*.jar"/>
+	</path>
+	<target name="init">
+		<tstamp/>
+		<mkdir dir="${build}" />
+	</target>
+
+	<target name="compile" depends="init"
+		description="Compile the source">
+		<javac srcdir="${src}" destdir="${build}" classpathref="classpath" />
+	</target>
+
+	<target name="dist" depends="compile">
+		<mkdir dir="${dist}/lib"/>
+		<jar jarfile="${dist}/lib/LPTC-${DSTAMP}.jar" basedir="${build}">
+			<manifest>
+		  	<attribute name="Main-Class"
+		               value="me.paulrose.lptc.Main" />
+			</manifest>
+		</jar>
+	</target>
+
+	<target name="clean">
+		<delete dir="${build}"/>
+		<delete dir="${dist}"/>
+	</target>
+</project>
