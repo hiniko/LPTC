@@ -392,7 +392,12 @@ public abstract class Ant extends MoveableEntity
 
 	public void harvest(Food f)
 	{
-		if (!isCarrying && !f.isBeingCarried())
+		if (	
+			!isCarrying 
+			&& !f.isBeingCarried() 
+			&& distanceTo(f) <= sizeRadius
+			&& nearestFood != null
+		)
 		{
 			carrying = f.harvest(CARRY_CAPACITY);
 			isCarrying = true;
@@ -404,7 +409,11 @@ public abstract class Ant extends MoveableEntity
 	
 	public void harvestFood()
 	{
-		if (!isCarrying && atFood && nearestFood != null)
+		if (
+			!isCarrying 
+			&& distanceTo(nearestFood) <= sizeRadius
+			&& nearestFood != null
+		)
 		{
 			carrying = nearestFood.harvest(CARRY_CAPACITY);
 			isCarrying = true;
@@ -489,12 +498,13 @@ public abstract class Ant extends MoveableEntity
 		if(isCarrying)
 		{
 			carrying.dropped();
+			carrying = null;
 		}
 	}
 
 	public void dropOffFood()
 	{
-		if(isCarrying)
+		if(isCarrying && atColony)
 		{
 			colony.addFood((Food) carrying); 	
 			carrying = null;
@@ -505,7 +515,7 @@ public abstract class Ant extends MoveableEntity
 
 	public void attackAnt(Ant a)
 	{
-		if(a != null)
+		if(a != null && distanceTo(a) <= sizeRadius)
 		{
 			a.takeDamage();
 			energy -= ANT_ATTACK_COST;
@@ -514,7 +524,7 @@ public abstract class Ant extends MoveableEntity
 	
 	public void attackColony()
 	{
-		if(enemyColony != null)
+		if(enemyColony != null && distanceTo(enemyColony) <= sizeRadius)
 		{
 			enemyColony.takeDamage();
 			energy -= COLONY_ATTACK_COST;
@@ -567,10 +577,13 @@ public abstract class Ant extends MoveableEntity
 	
 	public void eatFood(Food f)
 	{
-		energy += f.eat(f.getTotalFood());
-		f.setBeingCarried(false);
-		carrying = null;
-		isCarrying = false;
+		if(distanceTo(f) < sizeRadius)
+		{
+			energy += f.eat(f.getTotalFood());
+			f.setBeingCarried(false);
+			carrying = null;
+			isCarrying = false;
+		}
 	}
 	
 	
@@ -588,7 +601,7 @@ public abstract class Ant extends MoveableEntity
 	
 	public void eatAtColony()
 	{
-		if(atColony())
+		if(atColony)
 		{
 			eating = true;
 			energy += colony.feed(EAT_SPEED);
