@@ -2,10 +2,12 @@ package me.paulrose.lptc.simulator;
 
 public class PaulsAnt extends Ant
 {
+	private Colony colony;
 
 	PaulsAnt(String name, float x, float y, Colony c, World w)
 	{
 		super(name, x, y, c, w);
+		colony = c;
 	}
 
 	public void update(int delta)

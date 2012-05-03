@@ -33,14 +33,14 @@ public abstract class Ant extends MoveableEntity
 	
 	private int processOnTick;
 	
-	protected Colony colony, enemyColony;
+	private Colony colony, enemyColony;
 	
-	protected int energy, maxCarryWeight;
+	private int energy, maxCarryWeight;
 	
 	protected boolean foundFood, atFood, atColony, atEnemyAnt, atFriendlyAnt, 
 		attacked, fullEnergy, halfEnergy, eating, friendlyAntAttacked, 
 		friendlyAntFoundFood, nearEnemyColony, nearHomeColony, drawViewRadius, 
-		drawCollisions, drawEnergyBar, atEnemyColony;
+		drawCollisions, atEnemyColony , drawEnergyBar;
 	
 	protected Ant nearestAnt, nearestFriendlyAnt, nearestEnemyAnt,  attackerAnt, 
 		friendlyAttacked, friendlyWithFood;
@@ -55,7 +55,6 @@ public abstract class Ant extends MoveableEntity
 
 		// Starting values for the ant
 		colony = c;
-		//energy = 1000;
 		energy = MAX_ENERGY;
 		maxCarryWeight = 100;
 		sizeRadius = BODY_SIZE / 2;
@@ -64,17 +63,19 @@ public abstract class Ant extends MoveableEntity
 		drawCollisions = false;
 		drawEnergyBar = true;
 		
-		
 		processOnTick = world.random.nextInt(4);
-
 		setRotation(world.random.nextInt(360 + 1));
 	}
 
+	public int getColonyID()
+	{
+		return colony.ID;
+	}
+	
 	public void runLogic()
 	{
 		// User code will go here in the end
 	}
-	
 	
 	public void update(int delta)
 	{
@@ -107,7 +108,6 @@ public abstract class Ant extends MoveableEntity
 			atFood = false;
 			
 			enemyColony = null;
-			
 			
 			// Check if we have full energy before this loops deductions
 			fullEnergy = (energy == MAX_ENERGY);
@@ -608,6 +608,11 @@ public abstract class Ant extends MoveableEntity
 	public void resetColonyAttackFlag()
 	{
 		colony.resetAttack(this);
+	}
+
+	public int getEnergy()
+	{
+		return energy;
 	}
 
 }

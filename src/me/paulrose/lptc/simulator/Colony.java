@@ -34,8 +34,9 @@ public class Colony extends Entity
 	private Image antSpriteFull, antSpriteMin;
 	private float centerX, centerY;
 	protected boolean drawEnergyCount, drawAntCount, drawOwnerName,
-			drawHealthBar, autoCreateAnts, firstRun, attacked,
+			drawHealthBar, autoCreateAnts, attacked,
 			createAntProtection;
+	private boolean firstRun;
 
 	Colony(String n, float x, float y, String c, int f, World wo)
 	{
@@ -350,7 +351,7 @@ public class Colony extends Entity
 	//TODO checking of energy bounds and disable users from being to edit the values of sensitive variables.
 	public void resetAttack(Entity e)
 	{
-		if (e instanceof Ant && ((Ant) e).colony == this)
+		if (e instanceof Ant && ((Ant) e).getColonyID() == this.ID)
 		{
 			attacked = false;
 		}
