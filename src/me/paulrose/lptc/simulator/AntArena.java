@@ -2,6 +2,8 @@ package me.paulrose.lptc.simulator;
 
 import java.awt.event.MouseEvent;
 
+import javax.swing.JTextArea;
+
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.GameContainer;
@@ -18,15 +20,20 @@ public class AntArena extends BasicGame{
 	private float ZOOM_MAX	= 2.5f;
 		
 	private World world;
+	public JTextArea output;
+	public boolean printUserMessages = false;
 	int viewer_x, viewer_y, shutter;
 	float zoom;
 	
 	public static GameContainer c;
 	
 	
-	public AntArena() 
+	public AntArena(boolean userMessages, JTextArea c) 
 	{
 		super("The Ant Arena - There can only be One! (Colony)");
+		printUserMessages = userMessages;
+		output = c;
+		
 	}
 	
 	
@@ -46,6 +53,8 @@ public class AntArena extends BasicGame{
 
 		// Create the world
 		world = new World();
+		world.setMessageOutput(output);
+		world.setPrintUserMessages(printUserMessages);
 	
 		world.setMaxFoodSize(2000);
 		
@@ -152,7 +161,4 @@ public class AntArena extends BasicGame{
 			viewer_y += deltaY / this.zoom;
 		
 	}
-	
-	
-
 }

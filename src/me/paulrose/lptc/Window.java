@@ -36,7 +36,7 @@ public class Window extends JFrame {
 		editor = new EditorPanel();
 	
 		try {
-			canvas = new CanvasGameContainer(new AntArena());
+			canvas = new CanvasGameContainer(new AntArena(true, editor.output));
 			canvas.getContainer().setAlwaysRender(false);
 			
 			
@@ -46,7 +46,7 @@ public class Window extends JFrame {
 		}
 		
 		// Create menu bar
-		createMenuBar();
+		//createMenuBar();
 		createCanvasControlBar();
 		
 		// Wrapper bar for the canvas and their controls
@@ -56,7 +56,7 @@ public class Window extends JFrame {
 		center.add(canvasControlBar, BorderLayout.SOUTH);
 		
 		// Set up all window elements, Show time
-		add(menuBar, BorderLayout.NORTH);
+		//add(menuBar, BorderLayout.NORTH);
 		add(editor, BorderLayout.WEST);
 		add(center);
 		

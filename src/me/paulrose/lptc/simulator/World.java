@@ -11,6 +11,8 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+import javax.swing.JTextArea;
+
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -39,6 +41,10 @@ public class World
 	private QuadTree qtree;
 	public Rectangle drawClip;
 	private String testAntName;
+	public boolean printUserMessages, printWithSyso;
+	
+	public JTextArea output;
+	public boolean useSyso = false;
 
 	
 	public void createAllAntBattleWorld(long seed, String folder)
@@ -363,5 +369,28 @@ public class World
 	public int getTickNumber()
 	{
 		return tickCount;
+	}
+	
+	public void setMessageOutput(JTextArea c)
+	{
+		output = c;
+		printWithSyso = false;
+	}
+	
+	public void setPrintUserMessages(boolean b)
+	{
+		printUserMessages = b;
+	}
+	
+	public void userMessage(String msg)
+	{
+		if(printUserMessages)
+		{
+			if(printWithSyso)
+				System.out.println(msg);
+			else
+				output.append(msg + "\n");
+		}
+		
 	}
 }

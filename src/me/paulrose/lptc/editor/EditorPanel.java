@@ -50,7 +50,7 @@ import org.eclipse.jdt.core.compiler.CompilationProgress;
 import org.eclipse.jdt.core.compiler.batch.BatchCompiler;
 
 
-public class EditorPanel extends JPanel{
+public class EditorPanel extends JPanel {
 	
 	
 	public static final String TEMPLATE_PATH = "/resources/AntTemplate.txt";
@@ -58,7 +58,7 @@ public class EditorPanel extends JPanel{
 	private JTabbedPane tabs;
 	private JToolBar toolbar;
 	private JPanel helpbox;
-	private JTextArea output;
+	public JTextArea output;
 	private JTextField playerNameBox;
 	private JTextField antNameBox;
 	private Editor editor;

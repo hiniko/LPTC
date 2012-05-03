@@ -425,7 +425,7 @@ public abstract class Ant extends MoveableEntity
 
 	public void print(String msg)
 	{
-			System.out.println(msg);
+		world.userMessage(msg);
 	}
 
 	public boolean isCarrying()
