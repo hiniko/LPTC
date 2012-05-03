@@ -37,6 +37,8 @@ public class Food extends Entity
 		bounds.setWidth(size);
 		bounds.setHeight(size);
 		
+		sizeRadius = (int) (size /2);
+		
 		//Remember the center X and Y
 		centerX = bounds.getX();
 		centerY = bounds.getY();
@@ -60,6 +62,8 @@ public class Food extends Entity
 		
 		bounds.setCenterX(centerX);
 		bounds.setCenterY(centerY);
+		
+		sizeRadius = (int) (bounds.getWidth() /2);
 
 		update();
 

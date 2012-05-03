@@ -113,6 +113,8 @@ public class Colony extends Entity
 
 			bounds.setCenterX(centerX);
 			bounds.setCenterY(centerY);
+			
+			sizeRadius = (int) bounds.getWidth()/2;
 		} else
 		{
 			if (!firstRun)
