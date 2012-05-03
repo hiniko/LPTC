@@ -256,6 +256,12 @@ public abstract class Ant extends MoveableEntity
 				atFood = false;
 			}
 			
+			// Stop the ant if it is eating
+			if(eating)
+			{
+				stop();
+			}
+			
 			// Run user code here
 			runLogic();
 			
@@ -577,19 +583,30 @@ public abstract class Ant extends MoveableEntity
 	
 	public void eatFood(Food f)
 	{
-		if(distanceTo(f) < sizeRadius)
+		if(
+			distanceTo(f) < sizeRadius
+			&& energy < MAX_ENERGY
+		)
 		{
 			energy += f.eat(f.getTotalFood());
 			f.setBeingCarried(false);
 			carrying = null;
 			isCarrying = false;
+			eating = true;
+		}else
+		{
+			eating = false;
 		}
 	}
 	
 	
 	public void eatCarriedFood()
 	{
-		if(isCarrying && carrying instanceof Food)
+		if(
+			isCarrying 
+			&& carrying instanceof Food
+			&& energy < MAX_ENERGY
+		)
 		{
 			Food f = (Food) carrying;
 			energy += f.eat(f.getTotalFood());
@@ -601,10 +618,13 @@ public abstract class Ant extends MoveableEntity
 	
 	public void eatAtColony()
 	{
-		if(atColony)
+		if(atColony && energy < MAX_ENERGY)
 		{
 			eating = true;
 			energy += colony.feed(EAT_SPEED);
+		}else
+		{
+			eating = false;
 		}
 	}
 	
