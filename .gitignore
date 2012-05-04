@@ -39,6 +39,3 @@ LPTC_Full.jar
 ants/*
 ants
 
-src/me/paulrose/lptc/simulator/MoveableEntity.java
-
-src/me/paulrose/lptc/simulator/Ant.java

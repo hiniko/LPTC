@@ -99,6 +99,7 @@ public abstract class Ant extends MoveableEntity
 			nearestAnt = null;
 			nearestFriendlyAnt = null;
 			nearestEnemyAnt = null;
+			nearestFood = null;
 			
 			atEnemyColony = false;
 			atFriendlyAnt = false;

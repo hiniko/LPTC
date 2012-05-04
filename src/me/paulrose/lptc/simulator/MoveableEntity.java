@@ -200,8 +200,12 @@ public class MoveableEntity extends Entity
 	
 	public void goTo(Entity e)
 	{
-		walkToActive = true;
-		target = e;
+		if(e != null)
+		{
+			walkToActive = true;
+			target = e;
+		}
+		
 	}
 	
 	
