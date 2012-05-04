@@ -1,8 +1,15 @@
 package me.paulrose.lptc.simulator;
 
 import java.awt.event.MouseEvent;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.io.Writer;
 
+import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
+
+import me.paulrose.lptc.Window;
 
 import org.newdawn.slick.BasicGame;
 import org.newdawn.slick.Color;
@@ -22,6 +29,7 @@ public class AntArena extends BasicGame{
 	private World world;
 	public JTextArea output;
 	public boolean printUserMessages = false;
+	private boolean exceptionCaught = false;
 	int viewer_x, viewer_y, shutter;
 	float zoom;
 	
@@ -50,7 +58,7 @@ public class AntArena extends BasicGame{
 		c = container;
 		// Value init
 		zoom = 1f;
-
+		exceptionCaught = false;
 		// Create the world
 		world = new World();
 		world.setMessageOutput(output);
@@ -68,11 +76,27 @@ public class AntArena extends BasicGame{
 	@Override
 	public void update(GameContainer container, int delta) throws SlickException {
 		
-		if(!container.isPaused())
-		{
-			world.update(delta);
-			//world.update(0);
+		if(!exceptionCaught){
+			try{
+				if(!container.isPaused())
+				{
+					world.update(delta);
+					//world.update(0);
+				}
+			}catch (Exception e)
+			{
+				JOptionPane.showMessageDialog(null,
+			   "Exception caught!, check output for details. Stopping the arena \n " + e.getMessage(),
+			   "Error!",
+			    JOptionPane.ERROR_MESSAGE);
+				exceptionCaught = true;
+				Writer w = new StringWriter();
+				PrintWriter p = new PrintWriter(w);
+				e.printStackTrace(p);
+				output.append(w.toString());
+			}
 		}
+		
 	}
 	
 

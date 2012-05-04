@@ -11,6 +11,7 @@ import javax.swing.JFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 import org.newdawn.slick.CanvasGameContainer;
@@ -38,11 +39,13 @@ public class Window extends JFrame {
 		try {
 			canvas = new CanvasGameContainer(new AntArena(true, editor.output));
 			canvas.getContainer().setAlwaysRender(false);
-			
-			
-		} catch (SlickException e) {
-			System.out.println("The Game didn't work for some reason, COMPENSATE!");
-			e.printStackTrace();
+
+		} catch (Exception e)
+		{
+			JOptionPane.showMessageDialog(this,
+		   "Exception caught!, check output for details. 1. Stopping the arena \n " + e.getMessage(),
+		   "Error!",
+		    JOptionPane.ERROR_MESSAGE);
 		}
 		
 		// Create menu bar
@@ -86,9 +89,13 @@ public class Window extends JFrame {
 					canvas.start();
 					JButton b = (JButton)e.getSource();
 					b.setEnabled(false);
-				} catch (SlickException e1) {
-					System.out.println("Paul, I'ma let you finish, but this exectpion is the best of all time!");
-					e1.printStackTrace();
+				}catch (Exception e1)
+				{
+					JOptionPane.showMessageDialog(Window.this,
+				   "Exception caught!, check output for details. 2. Stopping the arena \n " + e1.getMessage(),
+				   "Error!",
+				    JOptionPane.ERROR_MESSAGE);
+					canvas.getContainer().exit();
 				}
 				
 			}
@@ -127,10 +134,13 @@ public class Window extends JFrame {
 				try
 				{
 					canvas.getContainer().reinit();
-				} catch (SlickException e)
+				}catch (Exception e)
 				{
-					e.printStackTrace();
-					System.out.println("Could not restart the game!");
+					JOptionPane.showMessageDialog(Window.this,
+				   "Exception caught!, check output for details. 3. Stopping the arena \n " + e.getMessage(),
+				   "Error!",
+				    JOptionPane.ERROR_MESSAGE);
+					canvas.getContainer().exit();
 				}
 				
 			}
