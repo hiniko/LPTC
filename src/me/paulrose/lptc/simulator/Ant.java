@@ -648,5 +648,59 @@ public abstract class Ant extends MoveableEntity
 	{
 		return energy;
 	}
+	
+	public int antCount()
+	{
+		return colony.antCount();
+	}
+	
+	public boolean isGameFirstRun()
+	{
+		return colony.isFirstRun();
+	}
+	
+	public void createAnt()
+	{
+		colony.createAnt();
+	}
+	
+	public void setColor(int r, int g, int b)
+	{
+		colony.setColor(r, g, b);
+	}
+	
+	public int getColonyEnergy()
+	{
+		return colony.getEnergy();
+	}
+	
+	public boolean isColonyUnderAttack()
+	{
+		return colony.isUnderAttack();
+	}
+	
+	public void resetColonyAttackFlag(Ant a)
+	{
+		colony.resetAttack(a);
+	}
+	
+	public void setAntAutoCreate(boolean b)
+	{
+		colony.setAutoCreateAnts(b);
+	}
+	
+	public boolean isAntAutoCreateOn()
+	{
+		return colony.isAutoCreateAntsOn();
+	}
 
+	public void setCreationProtection(boolean b)
+	{
+		colony.setCreationProtection(b);
+	}
+	
+	public boolean isCreationProtectionOn()
+	{
+		return colony.isCreationProtection();
+	}
 }
