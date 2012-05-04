@@ -55,6 +55,7 @@ public class AntArena extends BasicGame{
 		container.setShowFPS(true);
 		container.setAlwaysRender(true);
 		container.setUpdateOnlyWhenVisible(true);
+		container.setForceExit(true);
 		c = container;
 		// Value init
 		zoom = 1f;
@@ -63,11 +64,8 @@ public class AntArena extends BasicGame{
 		world = new World();
 		world.setMessageOutput(output);
 		world.setPrintUserMessages(printUserMessages);
-	
 		world.setMaxFoodSize(2000);
-		
 		world.createPlayerAntTestWorld(0, 4);
-	
 
 	}
 		

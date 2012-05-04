@@ -14,6 +14,8 @@ import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
+import org.lwjgl.openal.AL;
+import org.lwjgl.opengl.Display;
 import org.newdawn.slick.CanvasGameContainer;
 import org.newdawn.slick.SlickException;
 
@@ -65,6 +67,11 @@ public class Window extends JFrame {
 		
 		addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
+				canvas.getContainer().exit();
+				  if (Display.isCreated()) 
+			            Display.destroy();
+			      if (AL.isCreated()) 
+			            AL.destroy();
 				System.exit(0);
 			}
 		});
